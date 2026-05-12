@@ -13,20 +13,17 @@ export default function Loader({ onDone }: LoaderProps) {
     const video = videoRef.current;
     if (!video) return;
 
-    const handleEnd = () => {
+    const dismiss = () => {
       setVisible(false);
-      setTimeout(onDone, 700);
+      setTimeout(onDone, 600);
     };
 
-    video.addEventListener("ended", handleEnd);
+    video.addEventListener("ended", dismiss);
 
-    const timeout = setTimeout(() => {
-      setVisible(false);
-      setTimeout(onDone, 700);
-    }, 8000);
+    const timeout = setTimeout(dismiss, 4000);
 
     return () => {
-      video.removeEventListener("ended", handleEnd);
+      video.removeEventListener("ended", dismiss);
       clearTimeout(timeout);
     };
   }, [onDone]);
@@ -37,9 +34,10 @@ export default function Loader({ onDone }: LoaderProps) {
         <motion.div
           key="loader"
           initial={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.7, ease: "easeInOut" }}
+          exit={{ opacity: 0, scale: 1.05 }}
+          transition={{ duration: 0.6, ease: "easeInOut" }}
           className="fixed inset-0 z-[9999] flex items-center justify-center bg-black overflow-hidden"
+          onClick={() => { setVisible(false); setTimeout(onDone, 600); }}
         >
           <video
             ref={videoRef}
@@ -51,19 +49,28 @@ export default function Loader({ onDone }: LoaderProps) {
           />
 
           <motion.div
-            className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-1.5"
+            className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
+            transition={{ delay: 0.4 }}
           >
-            {[0, 1, 2].map((i) => (
-              <motion.span
-                key={i}
-                className="block w-2 h-2 rounded-full bg-yellow-400"
-                animate={{ scale: [1, 1.5, 1], opacity: [0.5, 1, 0.5] }}
-                transition={{ repeat: Infinity, duration: 1, delay: i * 0.2 }}
-              />
-            ))}
+            <div className="flex gap-1.5">
+              {[0, 1, 2].map((i) => (
+                <motion.span
+                  key={i}
+                  className="block w-2.5 h-2.5 rounded-full bg-[#FFC107]"
+                  animate={{ scale: [1, 1.6, 1], opacity: [0.5, 1, 0.5] }}
+                  transition={{ repeat: Infinity, duration: 0.9, delay: i * 0.2 }}
+                />
+              ))}
+            </div>
+            <motion.span
+              className="text-white/50 text-[11px] font-bold"
+              animate={{ opacity: [0.3, 0.8, 0.3] }}
+              transition={{ repeat: Infinity, duration: 2 }}
+            >
+              انقر للمتابعة
+            </motion.span>
           </motion.div>
         </motion.div>
       )}

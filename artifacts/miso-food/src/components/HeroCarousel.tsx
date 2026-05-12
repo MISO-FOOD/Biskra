@@ -7,6 +7,7 @@ const slides = [
   {
     id: 1,
     badge: "NOUVEAU",
+    badgeBg: "bg-black",
     title1: "MISO",
     title2: "SANDWICH",
     tagline: "فراش ، سخي ، لا يقاوم !",
@@ -18,6 +19,7 @@ const slides = [
   {
     id: 2,
     badge: "HOT DEAL",
+    badgeBg: "bg-[#DC2626]",
     title1: "MISO",
     title2: "MILONJ",
     tagline: "مزيج خرافي لا ينسى !",
@@ -28,7 +30,8 @@ const slides = [
   },
   {
     id: 3,
-    badge: "BEST",
+    badge: "BEST SELLER",
+    badgeBg: "bg-black",
     title1: "MISO",
     title2: "SPECIAL",
     tagline: "طعم ينافس الخيال !",
@@ -43,104 +46,131 @@ export default function HeroCarousel() {
   const [current, setCurrent] = useState(0);
 
   useEffect(() => {
-    const t = setInterval(() => setCurrent((c) => (c + 1) % slides.length), 4000);
+    const t = setInterval(() => setCurrent((c) => (c + 1) % slides.length), 5000);
     return () => clearInterval(t);
   }, []);
 
   const slide = slides[current];
 
   return (
-    <div className="relative overflow-hidden px-4 mb-2 max-w-[480px] w-full mx-auto" style={{ minHeight: 280 }}>
-      {/* Background Texture Container */}
-      <div className="absolute inset-0 mx-4 bg-[#FFC107] rounded-3xl overflow-hidden shadow-sm">
-        <div className="absolute inset-0 opacity-10" style={{
-          backgroundImage: 'repeating-linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000), repeating-linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000)',
-          backgroundPosition: '0 0, 10px 10px',
-          backgroundSize: '20px 20px'
-        }} />
+    <div className="relative mx-4 mb-3 rounded-[28px] overflow-hidden shadow-xl" style={{ minHeight: 260 }}>
+      {/* Yellow Background with diagonal stripes */}
+      <div className="absolute inset-0 bg-[#FFC107]">
+        <svg className="absolute inset-0 w-full h-full opacity-[0.07]" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="diag" width="20" height="20" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+              <rect width="10" height="20" fill="#000" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#diag)" />
+        </svg>
+        {/* Red corner blobs */}
+        <div className="absolute -top-10 -left-10 w-40 h-40 bg-[#DC2626] rounded-full opacity-15 blur-3xl" />
+        <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-[#DC2626] rounded-full opacity-10 blur-2xl" />
       </div>
 
       <AnimatePresence mode="wait">
         <motion.div
           key={slide.id}
-          initial={{ opacity: 0, x: 20 }}
+          initial={{ opacity: 0, x: 30 }}
           animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -20 }}
-          transition={{ duration: 0.4 }}
-          className="relative h-full flex pt-5 pb-8 px-2 z-10"
+          exit={{ opacity: 0, x: -30 }}
+          transition={{ duration: 0.45, ease: "easeOut" }}
+          className="relative flex h-full z-10 p-4 pt-5 pb-10 gap-2"
         >
-          {/* Left: Chef Character (Floating) */}
-          <motion.div 
-            className="w-[45%] flex items-end justify-start relative -bottom-2 -ml-2"
-            animate={{ y: [0, -8, 0] }}
-            transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+          {/* Left: Chef Character with float */}
+          <motion.div
+            className="relative w-[42%] flex items-end justify-start -mb-4 -ml-2"
+            animate={{ y: [0, -10, 0] }}
+            transition={{ repeat: Infinity, duration: 3.5, ease: "easeInOut" }}
           >
             <img
               src={chefImg}
-              alt="Miso Chef"
-              className="w-full h-auto object-contain drop-shadow-[0_10px_15px_rgba(0,0,0,0.3)] scale-[1.15] origin-bottom-left"
+              alt="Chef"
+              className="w-full h-auto object-contain drop-shadow-[0_12px_24px_rgba(0,0,0,0.35)]"
+              style={{ maxHeight: 230 }}
             />
-            <div className="absolute -top-1 -right-2 bg-black text-white text-[10px] font-black px-2 py-1 rounded-md rotate-[12deg] shadow-md z-20">
-              {slide.badge}
-            </div>
           </motion.div>
 
-          {/* Right Content Area */}
-          <div className="w-[55%] flex flex-col justify-center pl-2 relative z-10">
-            {/* Title */}
-            <div className="leading-[0.85] mb-2 drop-shadow-md">
-              <div className="text-4xl font-black text-black uppercase tracking-tighter">{slide.title1}</div>
-              <div className="text-4xl font-black text-[#DC2626] italic uppercase tracking-tighter">{slide.title2}</div>
+          {/* Right: Content */}
+          <div className="flex-1 flex flex-col justify-center gap-1.5">
+            {/* Badge */}
+            <span className={`self-start ${slide.badgeBg} text-white text-[9px] font-black px-2.5 py-1 rounded-lg tracking-widest shadow-md`}>
+              {slide.badge}
+            </span>
+
+            {/* Title with brush stroke SVG under SANDWICH */}
+            <div className="leading-none">
+              <div className="text-[38px] font-black text-black tracking-tighter drop-shadow-[1px_1px_0px_rgba(255,255,255,0.5)]">
+                {slide.title1}
+              </div>
+              <div className="relative inline-block">
+                <div className="text-[38px] font-black text-[#DC2626] italic tracking-tighter leading-none">
+                  {slide.title2}
+                </div>
+                {/* Brush stroke underline */}
+                <svg className="absolute -bottom-1 right-0 w-full" height="6" viewBox="0 0 120 6" preserveAspectRatio="none">
+                  <path d="M0 4 Q30 1 60 4 Q90 7 120 3" stroke="#DC2626" strokeWidth="3" fill="none" strokeLinecap="round" opacity="0.6" />
+                </svg>
+              </div>
             </div>
 
             {/* Tagline */}
-            <p className="text-[#DC2626] font-black text-sm mb-3 drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)]" style={{ textShadow: '-1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff' }}>
+            <p
+              className="text-[#DC2626] font-black text-[13px] mt-1"
+              style={{ textShadow: "1px 1px 0 #fff, -1px 1px 0 #fff, 1px -1px 0 #fff, -1px -1px 0 #fff" }}
+            >
               {slide.tagline}
             </p>
 
-            {/* Mini Images Stack */}
-            <div className="flex gap-2 mb-3">
+            {/* Sandwich thumbnails */}
+            <div className="flex gap-1.5 my-1">
               {slide.items.map((item, idx) => (
-                <div key={idx} className="relative w-14 h-14 rounded-xl overflow-hidden shadow-lg border-2 border-white rotate-[2deg] hover:rotate-0 transition-transform duration-300">
+                <div
+                  key={idx}
+                  className="relative rounded-xl overflow-hidden shadow-lg border-2 border-white"
+                  style={{ width: 58, height: 52 }}
+                >
                   <img src={item.img} alt={item.name} className="w-full h-full object-cover" />
-                  <div className="absolute inset-x-0 bottom-0 bg-[#DC2626]/90 px-1 py-0.5 text-center">
-                    <span className="text-white text-[8px] font-black block truncate">{item.name}</span>
+                  <div className="absolute inset-x-0 bottom-0 bg-[#DC2626]/90 py-0.5 px-1 text-center">
+                    <span className="text-white text-[8px] font-black block leading-tight truncate">{item.name}</span>
                   </div>
                 </div>
               ))}
             </div>
 
-            {/* Feature Pills */}
-            <div className="flex flex-col gap-1.5 mb-4">
-              <div className="flex items-center gap-1 text-[10px] font-bold text-black bg-white/50 w-fit px-2 py-0.5 rounded-full backdrop-blur-sm">
-                <Leaf className="w-3 h-3 text-[#DC2626]" /> مكونات طازجة
-              </div>
-              <div className="flex gap-2">
-                <div className="flex items-center gap-1 text-[10px] font-bold text-black bg-white/50 w-fit px-2 py-0.5 rounded-full backdrop-blur-sm">
-                  <CalendarDays className="w-3 h-3 text-[#DC2626]" /> كل يوم طازج
-                </div>
-                <div className="flex items-center gap-1 text-[10px] font-bold text-black bg-white/50 w-fit px-2 py-0.5 rounded-full backdrop-blur-sm">
-                  <ThumbsUp className="w-3 h-3 text-[#DC2626]" /> لا يُقاوم
-                </div>
-              </div>
+            {/* Feature pills */}
+            <div className="flex flex-wrap gap-1">
+              <span className="flex items-center gap-1 bg-white/60 backdrop-blur-sm text-[10px] font-bold text-black px-2 py-0.5 rounded-full">
+                <Leaf size={9} className="text-[#DC2626]" /> طازج
+              </span>
+              <span className="flex items-center gap-1 bg-white/60 backdrop-blur-sm text-[10px] font-bold text-black px-2 py-0.5 rounded-full">
+                <CalendarDays size={9} className="text-[#DC2626]" /> يومياً
+              </span>
+              <span className="flex items-center gap-1 bg-white/60 backdrop-blur-sm text-[10px] font-bold text-black px-2 py-0.5 rounded-full">
+                <ThumbsUp size={9} className="text-[#DC2626]" /> لا يُقاوم
+              </span>
             </div>
 
             {/* CTA */}
-            <button className="flex items-center gap-2 bg-black text-white font-black text-xs px-5 py-2.5 rounded-xl w-fit shadow-xl hover:bg-gray-800 active:scale-95 transition-all">
+            <motion.button
+              whileTap={{ scale: 0.92 }}
+              className="self-start flex items-center gap-2 bg-black text-white font-black text-[12px] px-4 py-2.5 rounded-xl shadow-lg mt-1"
+            >
               <span>استكشف الآن</span>
-              <ArrowLeft className="w-3 h-3" strokeWidth={3} />
-            </button>
+              <ArrowLeft size={13} strokeWidth={3} />
+            </motion.button>
           </div>
         </motion.div>
       </AnimatePresence>
 
       {/* Dots */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-20">
+      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-20">
         {slides.map((_, i) => (
           <button
             key={i}
             onClick={() => setCurrent(i)}
-            className={`rounded-full transition-all duration-300 ${i === current ? "w-6 h-2 bg-[#DC2626]" : "w-2 h-2 bg-white/80"}`}
+            className={`rounded-full transition-all duration-300 ${i === current ? "w-7 h-2 bg-[#DC2626] shadow-sm" : "w-2 h-2 bg-white/70"}`}
           />
         ))}
       </div>
