@@ -1,34 +1,10 @@
-import { createContext, useContext, useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 import type { MenuItem, SizeKey } from "@/data/menu";
 import { SIZE_LABELS } from "@/data/menu";
-
-export interface CartItem {
-  item: MenuItem;
-  quantity: number;
-  cartKey: string;     // unique: item.id + '-' + size
-  size?: SizeKey;
-  sizeLabel?: string;
-  sizePrice: number;   // actual price for chosen size
-}
-
-interface CartContextType {
-  items: CartItem[];
-  addItem: (item: MenuItem, size?: SizeKey, sizePrice?: number) => void;
-  removeItem: (cartKey: string) => void;
-  updateQuantity: (cartKey: string, qty: number) => void;
-  clearCart: () => void;
-  totalItems: number;
-  subtotal: number;
-  total: number;
-  deliveryFee: number;
-  freeDeliveryThreshold: number;
-  progressToFreeDelivery: number;
-}
-
-export const CartContext = createContext<CartContextType | null>(null);
+import { CartContext } from "./cartContextDef";
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>([]);
+  const [items, setItems] = useState<import("./cartContextDef").CartItem[]>([]);
 
   const addItem = useCallback((item: MenuItem, size?: SizeKey, sizePrice?: number) => {
     const resolvedPrice = sizePrice ?? item.price;
@@ -90,4 +66,3 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     </CartContext.Provider>
   );
 }
-
