@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import Loader from "@/components/Loader";
+import { CartProvider } from "@/context/CartContext";
 
 const queryClient = new QueryClient();
 
@@ -22,17 +23,19 @@ function App() {
   const [loaded, setLoaded] = useState(false);
 
   return (
-    <div dir="rtl" lang="ar" className="min-h-[100dvh] bg-background font-sans text-foreground selection:bg-primary/30">
+    <div dir="rtl" lang="ar" className="min-h-[100dvh] bg-[#F5F5F5] font-sans text-foreground">
       <Loader onDone={() => setLoaded(true)} />
       {loaded && (
-        <QueryClientProvider client={queryClient}>
-          <TooltipProvider>
-            <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-              <Router />
-            </WouterRouter>
-            <Toaster />
-          </TooltipProvider>
-        </QueryClientProvider>
+        <CartProvider>
+          <QueryClientProvider client={queryClient}>
+            <TooltipProvider>
+              <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+                <Router />
+              </WouterRouter>
+              <Toaster />
+            </TooltipProvider>
+          </QueryClientProvider>
+        </CartProvider>
       )}
     </div>
   );

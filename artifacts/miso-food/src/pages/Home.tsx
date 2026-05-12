@@ -1,59 +1,83 @@
+import { useState } from "react";
 import Navbar from "@/components/Navbar";
-import Hero from "@/components/Hero";
-import MenuSection from "@/components/MenuSection";
-import ContactBar from "@/components/ContactBar";
-import { PhoneCall } from "lucide-react";
+import HeroCarousel from "@/components/HeroCarousel";
+import CategoryTabs from "@/components/CategoryTabs";
+import MenuGrid from "@/components/MenuGrid";
+import CartSection from "@/components/CartSection";
+import BottomNav from "@/components/BottomNav";
+import type { Category } from "@/data/menu";
 
 export default function Home() {
+  const [activeCategory, setActiveCategory] = useState<Category>("sandwiches");
+  const [activeTab, setActiveTab] = useState("menu");
+
   return (
-    <div className="flex flex-col min-h-screen">
-      <ContactBar position="top" />
+    <div className="min-h-screen bg-[#F5F5F5] flex flex-col max-w-md mx-auto relative">
       <Navbar />
-      
-      <main className="flex-1">
-        <Hero />
-        <MenuSection />
+
+      <main className="flex-1 overflow-y-auto pb-24">
+        {/* Hero always visible */}
+        <HeroCarousel />
+
+        {activeTab === "menu" || activeTab === "location" || activeTab === "account" ? (
+          <>
+            <div className="bg-white mt-2 rounded-t-2xl shadow-sm">
+              <CategoryTabs active={activeCategory} onChange={setActiveCategory} />
+            </div>
+            <div className="bg-white mt-1 rounded-2xl shadow-sm mx-0 pt-3">
+              <MenuGrid category={activeCategory} />
+            </div>
+          </>
+        ) : null}
+
+        {activeTab === "cart" && (
+          <div className="bg-white mt-2 rounded-2xl shadow-sm pt-3">
+            <CartSection />
+          </div>
+        )}
+
+        {activeTab === "location" && (
+          <div className="mt-2 bg-white rounded-2xl shadow-sm p-4 mx-3">
+            <h2 className="font-black text-base mb-3">موقع المحل</h2>
+            <div className="bg-gray-100 rounded-xl h-40 flex items-center justify-center text-gray-400 font-bold">
+              حي سايحي 2
+            </div>
+            <p className="mt-3 text-sm font-bold text-gray-600">حي سايحي 2 — ساعات العمل: 10:30 الى 9:00 ليل</p>
+            <a
+              href="https://maps.google.com"
+              className="mt-3 flex items-center justify-center gap-2 bg-[#FFC107] text-black font-black text-sm py-3 rounded-xl w-full active:scale-95 transition-transform"
+            >
+              فتح الخريطة
+            </a>
+          </div>
+        )}
+
+        {activeTab === "account" && (
+          <div className="mt-2 bg-white rounded-2xl shadow-sm p-6 mx-3 text-center">
+            <div className="w-16 h-16 rounded-full bg-[#FFC107] flex items-center justify-center mx-auto mb-3 text-2xl font-black">
+              م
+            </div>
+            <p className="font-black text-base">مرحباً بك في ميسو فود</p>
+            <p className="text-gray-400 text-sm mt-1">اتصل بنا للطلب</p>
+            <a
+              href="tel:0793149538"
+              className="mt-4 flex items-center justify-center gap-2 bg-[#DC2626] text-white font-black text-sm py-3 rounded-xl w-full active:scale-95 transition-transform"
+              dir="ltr"
+            >
+              0793 14 95 38
+            </a>
+            <a
+              href="tel:0784291828"
+              className="mt-2 flex items-center justify-center gap-2 bg-[#DC2626] text-white font-black text-sm py-3 rounded-xl w-full active:scale-95 transition-transform"
+              dir="ltr"
+            >
+              0784 29 18 28
+            </a>
+          </div>
+        )}
       </main>
 
-      {/* Floating Action Button for mobile */}
-      <a 
-        href="tel:0793149538"
-        className="fixed bottom-24 right-6 md:hidden z-50 bg-secondary text-white p-4 rounded-full shadow-2xl hover:scale-110 active:scale-90 transition-transform"
-      >
-        <PhoneCall className="w-8 h-8 animate-pulse" />
-      </a>
-
-      {/* Bottom Footer Info */}
-      <footer id="contact" className="bg-foreground text-background pt-16 pb-8 border-t-[8px] border-primary">
-        <div className="container mx-auto px-4 md:px-8">
-          <div className="grid md:grid-cols-3 gap-12 mb-12 text-center md:text-start">
-            <div>
-              <h3 className="text-2xl font-black text-primary mb-4">MISO FOOD</h3>
-              <p className="text-muted/80 font-bold max-w-sm mx-auto md:mx-0">
-                أقوى المطاعم المتخصصة في السندويتشات والأطباق السريعة في الجزائر. طعم لا ينسى، وجودة لا تضاهى.
-              </p>
-            </div>
-            
-            <div className="flex flex-col items-center md:items-start gap-4 font-bold text-lg">
-              <h4 className="text-xl font-black text-white/50 mb-2">أرقام التوصيل</h4>
-              <a href="tel:0793149538" className="hover:text-primary transition-colors text-2xl" dir="ltr">0793 14 95 38</a>
-              <a href="tel:0784291828" className="hover:text-primary transition-colors text-2xl" dir="ltr">0784 29 18 28</a>
-            </div>
-
-            <div className="flex flex-col items-center md:items-start gap-4 font-bold text-lg">
-              <h4 className="text-xl font-black text-white/50 mb-2">أوقات العمل</h4>
-              <p>من 10:30 صباحاً</p>
-              <p>الى 9:00 ليلاً</p>
-              <p className="text-primary mt-2">حي سايحي 2</p>
-            </div>
-          </div>
-          
-          <div className="border-t border-white/10 pt-8 text-center text-white/50 font-bold text-sm flex flex-col md:flex-row justify-between items-center gap-4">
-            <p>© {new Date().getFullYear()} Miso Food. جميع الحقوق محفوظة.</p>
-            <p>صنع بشغف للجوعانين 🍔</p>
-          </div>
-        </div>
-      </footer>
+      <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
     </div>
   );
 }
