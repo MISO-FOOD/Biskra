@@ -8,25 +8,29 @@ interface LoaderProps {
 export default function Loader({ onDone }: LoaderProps) {
   const [visible, setVisible] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const dismissedRef = useRef(false);
+
+  const dismiss = () => {
+    if (dismissedRef.current) return;
+    dismissedRef.current = true;
+    setVisible(false);
+    setTimeout(onDone, 600);
+  };
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    const dismiss = () => {
-      setVisible(false);
-      setTimeout(onDone, 600);
-    };
-
     video.addEventListener("ended", dismiss);
 
-    const timeout = setTimeout(dismiss, 4000);
+    video.play().catch(() => {
+      setTimeout(dismiss, 3000);
+    });
 
     return () => {
       video.removeEventListener("ended", dismiss);
-      clearTimeout(timeout);
     };
-  }, [onDone]);
+  }, []);
 
   return (
     <AnimatePresence>
@@ -37,7 +41,7 @@ export default function Loader({ onDone }: LoaderProps) {
           exit={{ opacity: 0, scale: 1.05 }}
           transition={{ duration: 0.6, ease: "easeInOut" }}
           className="fixed inset-0 z-[9999] flex items-center justify-center bg-black overflow-hidden"
-          onClick={() => { setVisible(false); setTimeout(onDone, 600); }}
+          onClick={dismiss}
         >
           <video
             ref={videoRef}
