@@ -1,40 +1,20 @@
-import { Banknote, Headphones } from "lucide-react";
 import { motion } from "framer-motion";
-
-function MotoIcon({ size = 20 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 32 22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="6" cy="17" r="4" />
-      <circle cx="26" cy="17" r="4" />
-      <path d="M10 17 L14 8 L18 8 L22 13 L22 17" />
-      <path d="M12 8 L18 8" strokeWidth="3" strokeLinecap="round" />
-      <path d="M22 13 L26 11 M26 11 L28 9 M26 11 L28 13" />
-      <path d="M10 17 L6 17" />
-    </svg>
-  );
-}
 
 const features = [
   {
-    icon: <MotoIcon size={20} />,
-    iconBg: "bg-orange-50",
-    iconColor: "text-orange-500",
+    img: "/feat_delivery.png",
     title: "توصيل سريع",
     desc: "30 – 45 دقيقة",
     link: "تتبع الطلب",
   },
   {
-    icon: <Banknote size={18} className="text-green-600" strokeWidth={2.5} />,
-    iconBg: "bg-green-50",
-    iconColor: "text-green-600",
+    img: "/feat_payment.png",
     title: "الدفع عند الاستلام",
     desc: "ادفع لما يوصل",
     link: "آمن ومضمون",
   },
   {
-    icon: <Headphones size={18} className="text-blue-500" strokeWidth={2.5} />,
-    iconBg: "bg-blue-50",
-    iconColor: "text-blue-500",
+    img: "/feat_support.jpg",
     title: "دعم 24/7",
     desc: "دائماً لخدمتك",
     link: "تواصل معنا",
@@ -51,13 +31,17 @@ export default function FeaturesBar() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 + i * 0.08 }}
-            className="bg-white rounded-2xl p-3 flex flex-col items-center text-center shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-gray-50 cursor-pointer hover:shadow-md transition-all active:scale-95"
+            className="flex flex-col items-center text-center cursor-pointer active:scale-95 transition-transform"
           >
-            <div className={`w-9 h-9 rounded-xl ${f.iconBg} flex items-center justify-center mb-2 ${f.iconColor}`}>
-              {f.icon}
+            <div className="w-14 h-14 mb-2 flex items-center justify-center">
+              <img
+                src={f.img}
+                alt={f.title}
+                className="w-full h-full object-contain drop-shadow-md"
+              />
             </div>
             <h4 className="text-[10px] font-black text-black mb-0.5 leading-tight">{f.title}</h4>
-            <p className="text-[9px] text-gray-400 font-bold mb-1.5">{f.desc}</p>
+            <p className="text-[9px] text-gray-400 font-bold mb-1">{f.desc}</p>
             <span className="text-[9px] font-black text-[#DC2626]">{f.link} ←</span>
           </motion.div>
         ))}
