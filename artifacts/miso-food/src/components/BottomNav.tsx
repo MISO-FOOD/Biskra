@@ -1,4 +1,5 @@
-import { MapPin, UtensilsCrossed, ShoppingCart, User } from "lucide-react";
+import { Home as HomeIcon, UtensilsCrossed, ShoppingCart, ClipboardList } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/context/CartContext";
 
 interface BottomNavProps {
@@ -10,19 +11,18 @@ export default function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
   const { totalItems } = useCart();
 
   const tabs = [
-    { id: "location", label: "الموقع", icon: MapPin },
+    { id: "home", label: "الرئيسية", icon: HomeIcon },
     { id: "menu", label: "القائمة", icon: UtensilsCrossed },
     { id: "cart", label: "السلة", icon: ShoppingCart, isCenter: true },
-    { id: "account", label: "حسابي", icon: User },
+    { id: "history", label: "طلباتي", icon: ClipboardList },
   ];
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-100 shadow-2xl"
+      className="fixed bottom-0 left-0 right-0 z-50 bg-white shadow-[0_-10px_40px_rgba(0,0,0,0.08)] rounded-t-[30px]"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
-      data-testid="bottom-nav"
     >
-      <div className="flex items-center justify-around h-16 px-2 max-w-md mx-auto">
+      <div className="flex items-end justify-between h-20 px-6 pb-4 max-w-[480px] w-full mx-auto relative">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -31,19 +31,33 @@ export default function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
             return (
               <button
                 key={tab.id}
-                data-testid={`nav-${tab.id}`}
                 onClick={() => onTabChange(tab.id)}
-                className="flex flex-col items-center relative -mt-6"
+                className="relative flex flex-col items-center justify-center w-16 -mt-8 mx-2 active:scale-95 transition-transform"
               >
-                <div className="relative w-14 h-14 rounded-full bg-[#DC2626] flex items-center justify-center shadow-xl border-4 border-white">
-                  <Icon className="w-6 h-6 text-white" />
-                  {totalItems > 0 && (
-                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#FFC107] text-black text-[10px] font-black rounded-full flex items-center justify-center leading-none">
-                      {totalItems}
-                    </span>
-                  )}
-                </div>
-                <span className="text-[10px] font-bold text-[#DC2626] mt-1">{tab.label}</span>
+                <div className="absolute -top-1 w-[72px] h-[72px] bg-[#F5F5F5] rounded-full -z-10" />
+                <motion.div 
+                  className={`relative w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-colors ${isActive ? 'bg-[#FFC107]' : 'bg-[#DC2626]'}`}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <Icon className={`w-6 h-6 ${isActive ? 'text-black' : 'text-white'}`} strokeWidth={2.5} />
+                  
+                  <AnimatePresence>
+                    {totalItems > 0 && (
+                      <motion.span 
+                        key="badge"
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        exit={{ scale: 0 }}
+                        className="absolute -top-1 -right-1 w-5 h-5 bg-black text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-white shadow-sm"
+                      >
+                        {totalItems}
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+                <span className={`text-[10px] font-black mt-1.5 ${isActive ? "text-black" : "text-gray-400"}`}>
+                  {tab.label}
+                </span>
               </button>
             );
           }
@@ -51,12 +65,20 @@ export default function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
           return (
             <button
               key={tab.id}
-              data-testid={`nav-${tab.id}`}
               onClick={() => onTabChange(tab.id)}
-              className="flex flex-col items-center gap-1 flex-1 py-1"
+              className="relative flex flex-col items-center justify-center gap-1.5 flex-1 h-full pt-4"
             >
-              <Icon className={`w-5 h-5 ${isActive ? "text-[#DC2626]" : "text-gray-400"}`} />
-              <span className={`text-[10px] font-bold ${isActive ? "text-[#DC2626]" : "text-gray-400"}`}>
+              <div className="relative">
+                <Icon className={`w-6 h-6 transition-colors duration-300 ${isActive ? "text-black" : "text-gray-400"}`} strokeWidth={isActive ? 2.5 : 2} />
+                {isActive && (
+                  <motion.div 
+                    layoutId="bottomNavDot"
+                    className="absolute -top-3 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-[#FFC107]"
+                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                  />
+                )}
+              </div>
+              <span className={`text-[10px] transition-colors duration-300 ${isActive ? "font-black text-black" : "font-bold text-gray-400"}`}>
                 {tab.label}
               </span>
             </button>

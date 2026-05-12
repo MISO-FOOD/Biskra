@@ -1,4 +1,4 @@
-export type Category = "sandwiches" | "specials" | "drinks" | "extras";
+export type Category = "sandwiches" | "milonj" | "specials" | "drinks" | "extras" | "history";
 
 export interface MenuItem {
   id: string;
@@ -17,6 +17,7 @@ export const MENU_ITEMS: MenuItem[] = [
     price: 450,
     category: "sandwiches",
     image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=400&q=80",
+    description: "كبدة طازجة مع لحم مفروم وتتبيلة خاصة",
   },
   {
     id: "s2",
@@ -24,6 +25,7 @@ export const MENU_ITEMS: MenuItem[] = [
     price: 450,
     category: "sandwiches",
     image: "https://images.unsplash.com/photo-1509722747041-616f39b57569?w=400&q=80",
+    description: "مزيج رائع من المرقاز والشاورما اللذيذة",
   },
   {
     id: "s3",
@@ -31,6 +33,7 @@ export const MENU_ITEMS: MenuItem[] = [
     price: 250,
     category: "sandwiches",
     image: "https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?w=400&q=80",
+    description: "بطاطا مقلية مقرمشة مع جبن سائل",
   },
   {
     id: "s4",
@@ -38,6 +41,7 @@ export const MENU_ITEMS: MenuItem[] = [
     price: 450,
     category: "sandwiches",
     image: "https://images.unsplash.com/photo-1554433607-66b5efe9d304?w=400&q=80",
+    description: "سجق المرقاز مع اللحم المفروم المتبل",
   },
   {
     id: "s5",
@@ -45,6 +49,7 @@ export const MENU_ITEMS: MenuItem[] = [
     price: 500,
     category: "sandwiches",
     image: "https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=400&q=80",
+    description: "شاورما دجاج مع كبدة متبلة ومقلية",
   },
   {
     id: "s6",
@@ -52,6 +57,40 @@ export const MENU_ITEMS: MenuItem[] = [
     price: 450,
     category: "sandwiches",
     image: "https://images.unsplash.com/photo-1484723091739-30a097e8f929?w=400&q=80",
+    description: "ميكس شاورما مع فيونداشي وصلصة الثوم",
+  },
+  // Milonj
+  {
+    id: "m1",
+    name: "مرقاز فيونداشي ميلونج",
+    price: 450,
+    category: "milonj",
+    image: "https://images.unsplash.com/photo-1554433607-66b5efe9d304?w=400&q=80",
+    description: "ميلونج خاص من المرقاز والفيونداشي",
+  },
+  {
+    id: "m2",
+    name: "كبدة شاورما ميلونج",
+    price: 450,
+    category: "milonj",
+    image: "https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=400&q=80",
+    description: "ميلونج كبدة مقلية وشاورما",
+  },
+  {
+    id: "m3",
+    name: "مرقاز كبدة ميلونج",
+    price: 500,
+    category: "milonj",
+    image: "https://images.unsplash.com/photo-1509722747041-616f39b57569?w=400&q=80",
+    description: "مزيج غني من الكبدة والمرقاز",
+  },
+  {
+    id: "m4",
+    name: "شاورما فيونداشي ميلونج",
+    price: 450,
+    category: "milonj",
+    image: "https://images.unsplash.com/photo-1484723091739-30a097e8f929?w=400&q=80",
+    description: "ميلونج الشاورما والفيونداشي المميز",
   },
   // Specials
   {
@@ -68,7 +107,7 @@ export const MENU_ITEMS: MenuItem[] = [
     price: 1200,
     category: "specials",
     image: "https://images.unsplash.com/photo-1553979459-d2229ba7433b?w=400&q=80",
-    description: "3 سندويتشات + مشروبات",
+    description: "3 سندويتشات + 3 مشروبات",
   },
   // Drinks
   {
@@ -111,9 +150,9 @@ export const MENU_ITEMS: MenuItem[] = [
 
 export const CATEGORIES = [
   { id: "sandwiches" as Category, label: "السانويشات", icon: "burger" },
-  { id: "specials" as Category, label: "العروض", icon: "fire" },
+  { id: "milonj" as Category, label: "السانويش ميلونج", icon: "doubleBurger" },
+  { id: "extras" as Category, label: "إضافات", icon: "plus" },
   { id: "drinks" as Category, label: "المشروبات", icon: "drink" },
-  { id: "extras" as Category, label: "الإضافات", icon: "plus" },
+  { id: "specials" as Category, label: "العروض", icon: "fire" },
+  { id: "history" as Category, label: "الطلبات السابقة", icon: "clock" },
 ];
-
-export const DELIVERY_FEE = 100;

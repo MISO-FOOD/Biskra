@@ -1,6 +1,5 @@
 import { createContext, useContext, useState, useCallback } from "react";
 import type { MenuItem } from "@/data/menu";
-import { DELIVERY_FEE } from "@/data/menu";
 
 export interface CartItem {
   item: MenuItem;
@@ -17,6 +16,8 @@ interface CartContextType {
   subtotal: number;
   total: number;
   deliveryFee: number;
+  freeDeliveryThreshold: number;
+  progressToFreeDelivery: number;
 }
 
 const CartContext = createContext<CartContextType | null>(null);
@@ -54,11 +55,27 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const totalItems = items.reduce((s, ci) => s + ci.quantity, 0);
   const subtotal = items.reduce((s, ci) => s + ci.item.price * ci.quantity, 0);
-  const total = subtotal + (subtotal > 0 ? DELIVERY_FEE : 0);
+  
+  const freeDeliveryThreshold = 1500;
+  const deliveryFee = subtotal >= freeDeliveryThreshold ? 0 : 100;
+  const total = subtotal > 0 ? subtotal + deliveryFee : 0;
+  const progressToFreeDelivery = Math.min(subtotal / freeDeliveryThreshold, 1);
 
   return (
     <CartContext.Provider
-      value={{ items, addItem, removeItem, updateQuantity, clearCart, totalItems, subtotal, total, deliveryFee: DELIVERY_FEE }}
+      value={{ 
+        items, 
+        addItem, 
+        removeItem, 
+        updateQuantity, 
+        clearCart, 
+        totalItems, 
+        subtotal, 
+        total, 
+        deliveryFee,
+        freeDeliveryThreshold,
+        progressToFreeDelivery
+      }}
     >
       {children}
     </CartContext.Provider>
