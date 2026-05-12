@@ -1,9 +1,11 @@
+import { useState } from "react";
 import { Switch, Route, Router as WouterRouter } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
+import Loader from "@/components/Loader";
 
 const queryClient = new QueryClient();
 
@@ -17,16 +19,21 @@ function Router() {
 }
 
 function App() {
+  const [loaded, setLoaded] = useState(false);
+
   return (
     <div dir="rtl" lang="ar" className="min-h-[100dvh] bg-background font-sans text-foreground selection:bg-primary/30">
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-            <Router />
-          </WouterRouter>
-          <Toaster />
-        </TooltipProvider>
-      </QueryClientProvider>
+      <Loader onDone={() => setLoaded(true)} />
+      {loaded && (
+        <QueryClientProvider client={queryClient}>
+          <TooltipProvider>
+            <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+              <Router />
+            </WouterRouter>
+            <Toaster />
+          </TooltipProvider>
+        </QueryClientProvider>
+      )}
     </div>
   );
 }
