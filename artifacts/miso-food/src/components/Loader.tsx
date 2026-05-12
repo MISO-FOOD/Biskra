@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface LoaderProps {
@@ -9,13 +9,15 @@ export default function Loader({ onDone }: LoaderProps) {
   const [visible, setVisible] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
   const dismissedRef = useRef(false);
+  const onDoneRef = useRef(onDone);
+  onDoneRef.current = onDone;
 
-  const dismiss = () => {
+  const dismiss = useCallback(() => {
     if (dismissedRef.current) return;
     dismissedRef.current = true;
     setVisible(false);
-    setTimeout(onDone, 600);
-  };
+    setTimeout(() => onDoneRef.current(), 600);
+  }, []);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -23,14 +25,17 @@ export default function Loader({ onDone }: LoaderProps) {
 
     video.addEventListener("ended", dismiss);
 
-    video.play().catch(() => {
-      setTimeout(dismiss, 3000);
-    });
+    const playPromise = video.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(() => {
+        setTimeout(dismiss, 3000);
+      });
+    }
 
     return () => {
       video.removeEventListener("ended", dismiss);
     };
-  }, []);
+  }, [dismiss]);
 
   return (
     <AnimatePresence>
@@ -53,7 +58,7 @@ export default function Loader({ onDone }: LoaderProps) {
           />
 
           <motion.div
-            className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3"
+            className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 pointer-events-none"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
