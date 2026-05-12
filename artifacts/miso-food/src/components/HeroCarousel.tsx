@@ -8,36 +8,52 @@ const slides = [
 
 export default function HeroCarousel() {
   const [current, setCurrent] = useState(0);
-  const slide = slides[current] ?? slides[0];
+  const [direction, setDirection] = useState(1);
+
+  const goTo = (index: number) => {
+    setDirection(index > current ? 1 : -1);
+    setCurrent(index);
+  };
 
   useEffect(() => {
-    const t = setInterval(() => setCurrent((c) => (c + 1) % slides.length), 4000);
+    const t = setInterval(() => {
+      setDirection(1);
+      setCurrent((c) => (c + 1) % slides.length);
+    }, 4000);
     return () => clearInterval(t);
   }, []);
 
   return (
-    <div className="relative mx-4 mb-3 rounded-[20px] overflow-hidden shadow-xl" style={{ minHeight: 160 }}>
-      <AnimatePresence mode="wait">
+    <div className="mx-4 mb-3 rounded-[20px] overflow-hidden shadow-xl relative" style={{ aspectRatio: "16/7" }}>
+      <AnimatePresence initial={false} custom={direction}>
         <motion.img
-          key={slide.id}
-          src={slide.src}
-          alt={slide.alt}
-          initial={{ opacity: 0, x: 40 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -40 }}
-          transition={{ duration: 0.4, ease: "easeOut" }}
-          className="w-full h-auto object-cover block"
+          key={current}
+          src={slides[current].src}
+          alt={slides[current].alt}
+          custom={direction}
+          variants={{
+            enter: (d: number) => ({ x: d > 0 ? "100%" : "-100%", opacity: 0 }),
+            center: { x: 0, opacity: 1 },
+            exit: (d: number) => ({ x: d > 0 ? "-100%" : "100%", opacity: 0 }),
+          }}
+          initial="enter"
+          animate="center"
+          exit="exit"
+          transition={{ duration: 0.4, ease: "easeInOut" }}
+          className="absolute inset-0 w-full h-full object-cover"
           draggable={false}
         />
       </AnimatePresence>
 
       {/* Dots */}
-      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-20">
+      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-20">
         {slides.map((_, i) => (
           <button
             key={i}
-            onClick={() => setCurrent(i)}
-            className={`rounded-full transition-all duration-300 ${i === current ? "w-7 h-2 bg-[#DC2626] shadow-sm" : "w-2 h-2 bg-white/80"}`}
+            onClick={() => goTo(i)}
+            className={`rounded-full transition-all duration-300 ${
+              i === current ? "w-7 h-2 bg-[#DC2626] shadow-sm" : "w-2 h-2 bg-white/80"
+            }`}
           />
         ))}
       </div>
