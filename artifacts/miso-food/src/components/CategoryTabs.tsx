@@ -10,6 +10,7 @@ interface CategoryTabsProps {
 const CATEGORY_IMAGES: Record<string, string> = {
   sandwiches: "/cat_sandwiches.png",
   milonj: "/cat_milonj.png",
+  dishes: "/cat_dishes.png",
   extras: "/cat_extras.png",
   drinks: "/cat_drinks.png",
   specials: "/cat_offers.png",

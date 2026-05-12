@@ -1,4 +1,4 @@
-export type Category = "sandwiches" | "milonj" | "specials" | "drinks" | "extras" | "history";
+export type Category = "sandwiches" | "milonj" | "dishes" | "specials" | "drinks" | "extras" | "history";
 export type SizeKey = "quarter" | "half" | "full";
 
 export interface SizeOptions {
@@ -153,6 +153,61 @@ export const MENU_ITEMS: MenuItem[] = [
     spicy: 1,
     sizes: { quarter: 350, half: 450 },
   },
+  // ── الأطباق ──────────────────────────────────────────────────
+  {
+    id: "dish_marqaz_fiandashi",
+    name: "مرقاز فيونداشي",
+    price: 400,
+    category: "dishes",
+    image: "/food/marqaz_fiandashi.png",
+    description: "طبق مرقاز وفيونداشي",
+    spicy: 2,
+  },
+  {
+    id: "dish_marqaz_chawarma",
+    name: "مرقاز شاورما",
+    price: 450,
+    category: "dishes",
+    image: "/food/marqaz_chawarma.png",
+    description: "طبق مرقاز وشاورما",
+    spicy: 1,
+  },
+  {
+    id: "dish_marqaz_kabda",
+    name: "مرقاز كبدة",
+    price: 450,
+    category: "dishes",
+    image: "/food/kabda_chawarma.png",
+    description: "طبق مرقاز وكبدة",
+    spicy: 2,
+  },
+  {
+    id: "dish_kabda_chawarma",
+    name: "كبدة شاورما",
+    price: 500,
+    category: "dishes",
+    image: "/food/kabda_chawarma.png",
+    description: "طبق كبدة وشاورما",
+    spicy: 1,
+  },
+  {
+    id: "dish_kabda_fiandashi",
+    name: "كبدة فيونداشي",
+    price: 450,
+    category: "dishes",
+    image: "/food/kabda_fiandashi.png",
+    description: "طبق كبدة وفيونداشي",
+    spicy: 2,
+  },
+  {
+    id: "dish_chawarma_fiandashi",
+    name: "شاورما فيونداشي",
+    price: 450,
+    category: "dishes",
+    image: "/food/marqaz_chawarma.png",
+    description: "طبق شاورما وفيونداشي",
+    spicy: 1,
+  },
   // ── عروض ─────────────────────────────────────────────────────
   {
     id: "sp1",
@@ -269,6 +324,7 @@ export const MENU_ITEMS: MenuItem[] = [
 export const CATEGORIES = [
   { id: "sandwiches" as Category, label: "الساندويتشات", icon: "burger" },
   { id: "milonj" as Category, label: "الساندويتش ميلونج", icon: "doubleBurger" },
+  { id: "dishes" as Category, label: "الأطباق", icon: "dish" },
   { id: "extras" as Category, label: "إضافات", icon: "plus" },
   { id: "drinks" as Category, label: "Boissons مشروبات", icon: "drink" },
   { id: "specials" as Category, label: "العروض", icon: "fire" },
