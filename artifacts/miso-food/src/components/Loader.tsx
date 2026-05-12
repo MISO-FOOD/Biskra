@@ -8,13 +8,13 @@ interface LoaderProps {
 export default function Loader({ onDone }: LoaderProps) {
   const [visible, setVisible] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const dismissedRef = useRef(false);
+  const doneRef = useRef(false);
   const onDoneRef = useRef(onDone);
   onDoneRef.current = onDone;
 
   const dismiss = useCallback(() => {
-    if (dismissedRef.current) return;
-    dismissedRef.current = true;
+    if (doneRef.current) return;
+    doneRef.current = true;
     setVisible(false);
     setTimeout(() => onDoneRef.current(), 600);
   }, []);
@@ -23,18 +23,15 @@ export default function Loader({ onDone }: LoaderProps) {
     const video = videoRef.current;
     if (!video) return;
 
-    video.addEventListener("ended", dismiss);
+    const onEnded = () => dismiss();
+    video.addEventListener("ended", onEnded);
 
-    const playPromise = video.play();
-    if (playPromise !== undefined) {
-      playPromise.catch(() => {
-        setTimeout(dismiss, 3000);
-      });
+    const p = video.play();
+    if (p !== undefined) {
+      p.catch(() => setTimeout(dismiss, 3000));
     }
 
-    return () => {
-      video.removeEventListener("ended", dismiss);
-    };
+    return () => video.removeEventListener("ended", onEnded);
   }, [dismiss]);
 
   return (
@@ -43,9 +40,9 @@ export default function Loader({ onDone }: LoaderProps) {
         <motion.div
           key="loader"
           initial={{ opacity: 1 }}
-          exit={{ opacity: 0, scale: 1.05 }}
-          transition={{ duration: 0.6, ease: "easeInOut" }}
-          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black overflow-hidden"
+          exit={{ opacity: 0, scale: 1.04 }}
+          transition={{ duration: 0.55, ease: "easeInOut" }}
+          className="fixed inset-0 z-[9999] bg-black overflow-hidden flex items-center justify-center"
           onClick={dismiss}
         >
           <video
@@ -56,12 +53,11 @@ export default function Loader({ onDone }: LoaderProps) {
             playsInline
             className="w-full h-full object-cover"
           />
-
           <motion.div
             className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 pointer-events-none"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
+            transition={{ delay: 0.5 }}
           >
             <div className="flex gap-1.5">
               {[0, 1, 2].map((i) => (
