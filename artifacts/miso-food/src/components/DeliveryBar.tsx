@@ -37,7 +37,7 @@ export default function DeliveryBar() {
             <MapPin className="w-5 h-5 text-[#DC2626]" strokeWidth={2.5} />
           </div>
           <div>
-            <p className="text-[10px] text-gray-400 font-bold mb-0.5 leading-none">التوصيل إلى</p>
+            <p className="text-[10px] text-gray-400 font-bold mb-0.5 leading-none">مكان المحل</p>
             <div className="flex items-center gap-1">
               <span className="text-[13px] font-black text-black">حي سايحي 2 بسكرة</span>
               <ChevronDown className="w-3.5 h-3.5 text-gray-400" strokeWidth={2.5} />
