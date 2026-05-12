@@ -1,54 +1,115 @@
 import { useState } from "react";
-import { Minus, Plus, Trash2, ShoppingCart, User, Phone, MapPin, MessageSquare, CheckCircle } from "lucide-react";
+import { Minus, Plus, Trash2, ShoppingCart, User, Phone, MapPin, MessageSquare, CheckCircle, ClipboardCheck, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/context/CartContext";
 
-export default function CartSection() {
-  const {
-    items, removeItem, updateQuantity,
-    subtotal, clearCart,
-  } = useCart();
+const BOT_TOKEN = import.meta.env.VITE_TELEGRAM_BOT_TOKEN as string | undefined;
+const CHAT_ID   = import.meta.env.VITE_TELEGRAM_CHAT_ID   as string | undefined;
 
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
+export default function CartSection() {
+  const { items, removeItem, updateQuantity, subtotal, clearCart } = useCart();
+
+  const [name, setName]         = useState("");
+  const [phone, setPhone]       = useState("");
   const [location, setLocation] = useState("");
-  const [note, setNote] = useState("");
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [note, setNote]         = useState("");
+  const [errors, setErrors]     = useState<Record<string, string>>({});
+  const [sending, setSending]   = useState(false);
+  const [sent, setSent]         = useState(false);
+  const [sendError, setSendError] = useState("");
 
   const validate = () => {
     const e: Record<string, string> = {};
-    if (!name.trim()) e.name = "الاسم مطلوب";
-    if (!phone.trim()) e.phone = "رقم الهاتف مطلوب";
+    if (!name.trim())     e.name     = "الاسم مطلوب";
+    if (!phone.trim())    e.phone    = "رقم الهاتف مطلوب";
     if (!location.trim()) e.location = "مكان التوصيل مطلوب";
     setErrors(e);
     return Object.keys(e).length === 0;
   };
 
-  const handleOrder = () => {
-    if (items.length === 0) return;
-    if (!validate()) return;
-
+  const buildMessage = () => {
     const lines = items
       .map((ci) => {
         const sizePart = ci.sizeLabel ? ` (${ci.sizeLabel})` : "";
-        return `• ${ci.item.name}${sizePart} x${ci.quantity} — ${ci.sizePrice * ci.quantity} دج`;
+        return `• ${ci.item.name}${sizePart} × ${ci.quantity} — ${ci.sizePrice * ci.quantity} دج`;
       })
-      .join("%0A");
+      .join("\n");
 
-    const noteLine = note.trim() ? `%0A📝 *ملاحظة:* ${note}` : "";
-    const msg =
-      `🍔 *طلب جديد — ميسو فود*%0A%0A` +
-      `👤 *الاسم:* ${name}%0A` +
-      `📞 *الهاتف:* ${phone}%0A` +
-      `📍 *التوصيل إلى:* ${location}%0A%0A` +
-      `${lines}%0A%0A` +
-      `💰 *المجموع:* ${subtotal} دج%0A` +
-      `🚚 *سعر التوصيل:* يحدد بعد تأكيد الطلب%0A` +
+    return (
+      `🍔 *طلب جديد — ميسو فود*\n\n` +
+      `👤 *الاسم:* ${name}\n` +
+      `📞 *الهاتف:* ${phone}\n` +
+      `📍 *التوصيل إلى:* ${location}\n\n` +
+      `${lines}\n\n` +
+      `💰 *المجموع:* ${subtotal} دج\n` +
+      `🚚 *التوصيل:* يحدد بعد تأكيد الطلب\n` +
       `💵 *الدفع:* ادفع لما يوصل الطلب عندك` +
-      `${noteLine}`;
-
-    window.open(`https://t.me/+213793149538?text=${msg}`, "_blank");
+      (note.trim() ? `\n📝 *ملاحظة:* ${note}` : "")
+    );
   };
+
+  const handleOrder = async () => {
+    if (items.length === 0) return;
+    if (!validate()) return;
+
+    setSending(true);
+    setSendError("");
+
+    const text = buildMessage();
+
+    try {
+      if (BOT_TOKEN && CHAT_ID) {
+        const res = await fetch(
+          `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ chat_id: CHAT_ID, text, parse_mode: "Markdown" }),
+          }
+        );
+        if (!res.ok) throw new Error("فشل الإرسال");
+      } else {
+        const encoded = encodeURIComponent(text);
+        window.open(`https://t.me/+213793149538?text=${encoded}`, "_blank");
+      }
+      setSent(true);
+      clearCart();
+    } catch {
+      setSendError("حدث خطأ أثناء الإرسال، حاول مرة أخرى");
+    } finally {
+      setSending(false);
+    }
+  };
+
+  if (sent) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="flex flex-col items-center justify-center py-28 px-6 text-center"
+      >
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ type: "spring", stiffness: 260, damping: 18 }}
+          className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mb-5 shadow-md"
+        >
+          <CheckCircle className="w-12 h-12 text-green-500" strokeWidth={2} />
+        </motion.div>
+        <p className="text-black font-black text-xl mb-2">تم إرسال طلبك!</p>
+        <p className="text-gray-400 font-bold text-sm leading-relaxed">
+          سيتم التواصل معك عبر تيليغرام لتأكيد الطلب وتحديد سعر التوصيل
+        </p>
+        <motion.button
+          whileTap={{ scale: 0.95 }}
+          onClick={() => setSent(false)}
+          className="mt-8 bg-[#FFC107] text-black font-black px-8 py-3 rounded-2xl shadow-md"
+        >
+          طلب جديد
+        </motion.button>
+      </motion.div>
+    );
+  }
 
   if (items.length === 0) {
     return (
@@ -142,60 +203,40 @@ export default function CartSection() {
       <div className="bg-white rounded-2xl p-4 shadow-[0_2px_12px_rgba(0,0,0,0.06)] mb-4 border border-gray-50">
         <h3 className="text-sm font-black text-black mb-4">معلومات الزبون</h3>
         <div className="flex flex-col gap-3">
-          {/* Name */}
           <div>
             <div className={`flex items-center gap-2 bg-gray-50 rounded-xl px-3 py-2.5 border ${errors.name ? "border-[#DC2626]" : "border-gray-100"} transition-colors`}>
               <User size={15} className="text-gray-400 flex-shrink-0" />
-              <input
-                value={name}
-                onChange={(e) => { setName(e.target.value); setErrors((p) => ({ ...p, name: "" })); }}
-                placeholder="الاسم"
-                className="flex-1 bg-transparent text-sm font-black text-black placeholder-gray-300 outline-none text-right"
-              />
+              <input value={name} onChange={(e) => { setName(e.target.value); setErrors((p) => ({ ...p, name: "" })); }}
+                placeholder="الاسم" className="flex-1 bg-transparent text-sm font-black text-black placeholder-gray-300 outline-none text-right" />
             </div>
             {errors.name && <p className="text-[#DC2626] text-[11px] font-bold mt-1 text-right">{errors.name}</p>}
           </div>
 
-          {/* Phone */}
           <div>
             <div className={`flex items-center gap-2 bg-gray-50 rounded-xl px-3 py-2.5 border ${errors.phone ? "border-[#DC2626]" : "border-gray-100"} transition-colors`}>
               <Phone size={15} className="text-gray-400 flex-shrink-0" />
-              <input
-                value={phone}
-                onChange={(e) => { setPhone(e.target.value); setErrors((p) => ({ ...p, phone: "" })); }}
-                placeholder="رقم الهاتف"
-                type="tel"
-                inputMode="tel"
-                className="flex-1 bg-transparent text-sm font-black text-black placeholder-gray-300 outline-none text-right"
-              />
+              <input value={phone} onChange={(e) => { setPhone(e.target.value); setErrors((p) => ({ ...p, phone: "" })); }}
+                placeholder="رقم الهاتف" type="tel" inputMode="tel"
+                className="flex-1 bg-transparent text-sm font-black text-black placeholder-gray-300 outline-none text-right" />
             </div>
             {errors.phone && <p className="text-[#DC2626] text-[11px] font-bold mt-1 text-right">{errors.phone}</p>}
           </div>
 
-          {/* Location */}
           <div>
             <div className={`flex items-center gap-2 bg-gray-50 rounded-xl px-3 py-2.5 border ${errors.location ? "border-[#DC2626]" : "border-gray-100"} transition-colors`}>
               <MapPin size={15} className="text-gray-400 flex-shrink-0" />
-              <input
-                value={location}
-                onChange={(e) => { setLocation(e.target.value); setErrors((p) => ({ ...p, location: "" })); }}
+              <input value={location} onChange={(e) => { setLocation(e.target.value); setErrors((p) => ({ ...p, location: "" })); }}
                 placeholder="مكان التوصيل"
-                className="flex-1 bg-transparent text-sm font-black text-black placeholder-gray-300 outline-none text-right"
-              />
+                className="flex-1 bg-transparent text-sm font-black text-black placeholder-gray-300 outline-none text-right" />
             </div>
             {errors.location && <p className="text-[#DC2626] text-[11px] font-bold mt-1 text-right">{errors.location}</p>}
           </div>
 
-          {/* Note */}
           <div className="flex items-start gap-2 bg-gray-50 rounded-xl px-3 py-2.5 border border-gray-100">
             <MessageSquare size={15} className="text-gray-400 flex-shrink-0 mt-0.5" />
-            <textarea
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              placeholder="ملاحظة (اختياري)"
-              rows={2}
-              className="flex-1 bg-transparent text-sm font-black text-black placeholder-gray-300 outline-none text-right resize-none"
-            />
+            <textarea value={note} onChange={(e) => setNote(e.target.value)}
+              placeholder="ملاحظة (اختياري)" rows={2}
+              className="flex-1 bg-transparent text-sm font-black text-black placeholder-gray-300 outline-none text-right resize-none" />
           </div>
         </div>
       </div>
@@ -229,22 +270,38 @@ export default function CartSection() {
         <p className="text-sm font-black text-green-800">ادفع لما يوصل الطلب عندك</p>
       </div>
 
-      {/* Order Button */}
+      {/* Error */}
+      <AnimatePresence>
+        {sendError && (
+          <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+            className="text-[#DC2626] text-[12px] font-bold text-center mb-3">
+            {sendError}
+          </motion.p>
+        )}
+      </AnimatePresence>
+
+      {/* Confirm Order Button */}
       <motion.button
-        whileTap={{ scale: 0.98 }}
+        whileTap={{ scale: 0.97 }}
         onClick={handleOrder}
-        className="w-full relative overflow-hidden text-white font-black text-base py-4 rounded-2xl shadow-[0_8px_24px_rgba(34,158,217,0.35)] flex items-center justify-center gap-3 group"
-        style={{ background: "linear-gradient(135deg, #229ED9 0%, #1A85B8 100%)" }}
+        disabled={sending}
+        className="w-full flex items-center justify-center gap-3 py-4 rounded-2xl font-black text-base text-white shadow-[0_8px_24px_rgba(220,38,38,0.35)] disabled:opacity-70 transition-opacity"
+        style={{ background: "linear-gradient(135deg, #DC2626 0%, #b91c1c 100%)" }}
       >
-        <span className="absolute inset-0 w-[200%] h-full bg-gradient-to-r from-transparent via-white/15 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="white" className="flex-shrink-0">
-          <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-2.007 9.455c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.87.766z" />
-        </svg>
-        <span>إرسال الطلب للبوت</span>
-        <span className="font-black text-yellow-300">{subtotal.toLocaleString()} دج</span>
+        {sending ? (
+          <Loader2 size={20} className="animate-spin" />
+        ) : (
+          <ClipboardCheck size={20} strokeWidth={2.5} />
+        )}
+        <span>{sending ? "جاري الإرسال..." : "تأكيد الطلب"}</span>
+        {!sending && (
+          <span className="bg-white/20 text-white font-black text-sm px-3 py-1 rounded-xl">
+            {subtotal.toLocaleString()} دج
+          </span>
+        )}
       </motion.button>
       <p className="text-center text-[11px] text-gray-400 font-bold mt-3">
-        سيتم التواصل معك عبر تيليغرام لتأكيد الطلب وتحديد سعر التوصيل
+        سيتم التواصل معك لتأكيد الطلب وتحديد سعر التوصيل
       </p>
     </div>
   );
