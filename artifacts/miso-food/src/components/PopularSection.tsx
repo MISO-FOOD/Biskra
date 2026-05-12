@@ -1,18 +1,69 @@
 import { useState } from "react";
-import { Plus, Flame, TrendingUp } from "lucide-react";
-import { motion } from "framer-motion";
+import { Plus, Flame, TrendingUp, ChevronDown } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/context/CartContext";
-import { MENU_ITEMS } from "@/data/menu";
-import type { MenuItem } from "@/data/menu";
+import { MENU_ITEMS, SIZE_LABELS } from "@/data/menu";
+import type { MenuItem, SizeKey } from "@/data/menu";
+
+function MiniSizePicker({ item, onClose }: { item: MenuItem; onClose: () => void }) {
+  const { addItem } = useCart();
+  const [added, setAdded] = useState<SizeKey | null>(null);
+  const sizes = item.sizes!;
+  const sizeEntries = (Object.entries(sizes) as [SizeKey, number][]).filter(([, v]) => v !== undefined);
+
+  const handlePick = (size: SizeKey, price: number) => {
+    addItem(item, size, price);
+    setAdded(size);
+    setTimeout(() => { setAdded(null); onClose(); }, 700);
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.9 }}
+      className="absolute inset-0 bg-white rounded-2xl z-20 p-2.5 flex flex-col shadow-xl"
+    >
+      <div className="flex items-center justify-between mb-1.5">
+        <span className="text-[10px] font-black text-black">اختر الحجم</span>
+        <button onClick={onClose} className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center">
+          <ChevronDown size={10} strokeWidth={3} className="text-gray-500" />
+        </button>
+      </div>
+      <div className="flex flex-col gap-1 flex-1 justify-center">
+        {sizeEntries.map(([size, price]) => (
+          <motion.button
+            key={size}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => handlePick(size, price)}
+            className={`flex justify-between items-center px-2 py-1.5 rounded-lg text-[11px] font-black border-2 transition-all ${
+              added === size
+                ? "bg-green-500 border-green-500 text-white"
+                : "bg-[#FFC107]/10 border-[#FFC107]/40 text-black"
+            }`}
+          >
+            <span>{SIZE_LABELS[size]}</span>
+            <span>{added === size ? "✓" : `${price} دج`}</span>
+          </motion.button>
+        ))}
+      </div>
+    </motion.div>
+  );
+}
 
 function PopularCard({ item, index }: { item: MenuItem; index: number }) {
   const { addItem } = useCart();
   const [added, setAdded] = useState(false);
+  const [showPicker, setShowPicker] = useState(false);
 
   const handleAdd = () => {
-    addItem(item);
-    setAdded(true);
-    setTimeout(() => setAdded(false), 800);
+    if (item.sizes) {
+      setShowPicker(true);
+    } else {
+      addItem(item);
+      setAdded(true);
+      setTimeout(() => setAdded(false), 800);
+    }
   };
 
   return (
@@ -20,7 +71,7 @@ function PopularCard({ item, index }: { item: MenuItem; index: number }) {
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: index * 0.08 }}
-      className="flex-shrink-0 w-[150px] bg-white rounded-2xl overflow-hidden shadow-[0_2px_14px_rgba(0,0,0,0.07)] border border-gray-50"
+      className="relative flex-shrink-0 w-[150px] bg-white rounded-2xl overflow-hidden shadow-[0_2px_14px_rgba(0,0,0,0.07)] border border-gray-50"
     >
       <div className="relative bg-[#FFF9E6]" style={{ height: 100 }}>
         <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
@@ -35,7 +86,15 @@ function PopularCard({ item, index }: { item: MenuItem; index: number }) {
       <div className="p-2.5">
         <h4 className="text-[12px] font-black text-black leading-tight mb-1.5 line-clamp-1">{item.name}</h4>
         <div className="flex items-center justify-between">
-          <span className="text-[13px] font-black text-[#DC2626]">{item.price}<span className="text-[10px]"> دج</span></span>
+          <div>
+            {item.sizes ? (
+              <span className="text-[11px] font-black text-[#DC2626]">
+                {Math.min(...Object.values(item.sizes).filter(Boolean) as number[])}+<span className="text-[9px]"> دج</span>
+              </span>
+            ) : (
+              <span className="text-[13px] font-black text-[#DC2626]">{item.price}<span className="text-[10px]"> دج</span></span>
+            )}
+          </div>
           <motion.button
             onClick={handleAdd}
             whileTap={{ scale: 0.85 }}
@@ -46,6 +105,13 @@ function PopularCard({ item, index }: { item: MenuItem; index: number }) {
           </motion.button>
         </div>
       </div>
+
+      {/* Mini size picker overlay */}
+      <AnimatePresence>
+        {showPicker && item.sizes && (
+          <MiniSizePicker item={item} onClose={() => setShowPicker(false)} />
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }

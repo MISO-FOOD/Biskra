@@ -10,7 +10,12 @@ const VALID_COUPONS: Record<string, number> = {
 };
 
 export default function CartSection() {
-  const { items, removeItem, updateQuantity, subtotal, total, deliveryFee, clearCart, freeDeliveryThreshold, progressToFreeDelivery } = useCart();
+  const {
+    items, removeItem, updateQuantity,
+    subtotal, total, deliveryFee, clearCart,
+    freeDeliveryThreshold, progressToFreeDelivery,
+  } = useCart();
+
   const [coupon, setCoupon] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null);
   const [couponError, setCouponError] = useState("");
@@ -35,7 +40,12 @@ export default function CartSection() {
 
   const handleOrder = () => {
     if (items.length === 0) return;
-    const lines = items.map((ci) => `${ci.item.name} x${ci.quantity} - ${ci.item.price * ci.quantity} دج`).join("%0A");
+    const lines = items
+      .map((ci) => {
+        const sizePart = ci.sizeLabel ? ` (${ci.sizeLabel})` : "";
+        return `${ci.item.name}${sizePart} x${ci.quantity} - ${ci.sizePrice * ci.quantity} دج`;
+      })
+      .join("%0A");
     const couponLine = appliedCoupon ? `%0A*كود الخصم:* ${appliedCoupon} (-${discountAmount} دج)` : "";
     const msg = `*طلب جديد - ميسو فود*%0A%0A${lines}%0A${couponLine}%0A*المجموع:* ${subtotal} دج%0A*التوصيل:* ${deliveryFee === 0 ? "مجاني" : deliveryFee + " دج"}%0A*الإجمالي:* ${finalTotal} دج%0A%0A*الدفع:* عند الاستلام`;
     window.open(`https://t.me/+213793149538?text=${msg}`, "_blank");
@@ -59,7 +69,7 @@ export default function CartSection() {
           <ShoppingCart className="w-11 h-11 text-gray-300" strokeWidth={1.5} />
         </motion.div>
         <p className="text-black font-black text-xl mb-2">سلة الطلبات فارغة</p>
-        <p className="text-gray-400 font-bold text-sm leading-relaxed">أضف وجباتك المفضلة من القائمة واستمتع بالطعم</p>
+        <p className="text-gray-400 font-bold text-sm leading-relaxed">أضف وجباتك المفضلة من القائمة</p>
       </motion.div>
     );
   }
@@ -74,14 +84,13 @@ export default function CartSection() {
           </div>
           <div>
             <h2 className="text-lg font-black text-black leading-tight">سلة الطلبات</h2>
-            <p className="text-xs text-gray-400 font-bold">{items.reduce((s, ci) => s + ci.quantity, 0)} عناصر مختارة</p>
+            <p className="text-xs text-gray-400 font-bold">
+              {items.reduce((s, ci) => s + ci.quantity, 0)} عناصر مختارة
+            </p>
           </div>
         </div>
-        <motion.button
-          whileTap={{ scale: 0.95 }}
-          onClick={clearCart}
-          className="text-xs bg-red-50 text-[#DC2626] font-black px-3 py-1.5 rounded-xl border border-red-100"
-        >
+        <motion.button whileTap={{ scale: 0.95 }} onClick={clearCart}
+          className="text-xs bg-red-50 text-[#DC2626] font-black px-3 py-1.5 rounded-xl border border-red-100">
           مسح الكل
         </motion.button>
       </div>
@@ -111,7 +120,7 @@ export default function CartSection() {
         <AnimatePresence>
           {items.map((ci) => (
             <motion.div
-              key={ci.item.id}
+              key={ci.cartKey}
               initial={{ opacity: 0, x: 40 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -40, scale: 0.92 }}
@@ -122,31 +131,30 @@ export default function CartSection() {
                 <img src={ci.item.image} alt={ci.item.name} className="w-full h-full object-cover" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-black text-sm text-black truncate mb-1">{ci.item.name}</p>
-                <p className="text-[#DC2626] font-black text-sm">{ci.item.price} دج</p>
+                <p className="font-black text-sm text-black truncate leading-tight">{ci.item.name}</p>
+                {ci.sizeLabel && (
+                  <span className="inline-block text-[10px] font-black bg-[#FFC107]/20 text-black px-2 py-0.5 rounded-full mt-0.5 mb-0.5">
+                    {ci.sizeLabel}
+                  </span>
+                )}
+                <p className="text-[#DC2626] font-black text-sm">{ci.sizePrice} دج</p>
               </div>
               <div className="flex items-center gap-1.5 bg-gray-50 p-1 rounded-xl">
-                <motion.button
-                  whileTap={{ scale: 0.85 }}
-                  onClick={() => updateQuantity(ci.item.id, ci.quantity - 1)}
-                  className="w-7 h-7 rounded-lg bg-white shadow-sm flex items-center justify-center"
-                >
+                <motion.button whileTap={{ scale: 0.85 }}
+                  onClick={() => updateQuantity(ci.cartKey, ci.quantity - 1)}
+                  className="w-7 h-7 rounded-lg bg-white shadow-sm flex items-center justify-center">
                   <Minus size={13} strokeWidth={3} className="text-black" />
                 </motion.button>
                 <span className="w-6 text-center font-black text-sm">{ci.quantity}</span>
-                <motion.button
-                  whileTap={{ scale: 0.85 }}
-                  onClick={() => updateQuantity(ci.item.id, ci.quantity + 1)}
-                  className="w-7 h-7 rounded-lg bg-[#FFC107] shadow-sm flex items-center justify-center"
-                >
+                <motion.button whileTap={{ scale: 0.85 }}
+                  onClick={() => updateQuantity(ci.cartKey, ci.quantity + 1)}
+                  className="w-7 h-7 rounded-lg bg-[#FFC107] shadow-sm flex items-center justify-center">
                   <Plus size={13} strokeWidth={3} className="text-black" />
                 </motion.button>
               </div>
-              <motion.button
-                whileTap={{ scale: 0.85 }}
-                onClick={() => removeItem(ci.item.id)}
-                className="w-8 h-8 rounded-xl bg-red-50 flex items-center justify-center shrink-0"
-              >
+              <motion.button whileTap={{ scale: 0.85 }}
+                onClick={() => removeItem(ci.cartKey)}
+                className="w-8 h-8 rounded-xl bg-red-50 flex items-center justify-center shrink-0">
                 <Trash2 size={15} strokeWidth={2.5} className="text-[#DC2626]" />
               </motion.button>
             </motion.div>
@@ -154,17 +162,14 @@ export default function CartSection() {
         </AnimatePresence>
       </div>
 
-      {/* Coupon Code */}
+      {/* Coupon */}
       <div className="bg-white rounded-2xl p-4 shadow-[0_2px_12px_rgba(0,0,0,0.06)] mb-4 border border-gray-50">
         <div className="flex items-center gap-2 mb-3">
           <Tag size={16} className="text-[#FFC107]" strokeWidth={2.5} />
           <span className="text-sm font-black text-black">كود الخصم</span>
           {appliedCoupon && (
-            <motion.span
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              className="mr-auto text-[10px] font-black bg-green-100 text-green-700 px-2 py-0.5 rounded-full"
-            >
+            <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }}
+              className="mr-auto text-[10px] font-black bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
               -{discountPercent}% مفعّل
             </motion.span>
           )}
@@ -179,19 +184,14 @@ export default function CartSection() {
             className="flex-1 bg-gray-50 border border-gray-100 rounded-xl px-3 py-2.5 text-sm font-black text-black placeholder-gray-300 outline-none text-right focus:border-[#FFC107] transition-colors disabled:opacity-60"
           />
           {appliedCoupon ? (
-            <motion.button
-              whileTap={{ scale: 0.95 }}
+            <motion.button whileTap={{ scale: 0.95 }}
               onClick={() => { setAppliedCoupon(null); setCoupon(""); }}
-              className="px-4 py-2.5 bg-red-50 text-[#DC2626] text-xs font-black rounded-xl border border-red-100"
-            >
+              className="px-4 py-2.5 bg-red-50 text-[#DC2626] text-xs font-black rounded-xl border border-red-100">
               إلغاء
             </motion.button>
           ) : (
-            <motion.button
-              whileTap={{ scale: 0.95 }}
-              onClick={applyCoupon}
-              className="px-4 py-2.5 bg-[#FFC107] text-black text-xs font-black rounded-xl shadow-sm"
-            >
+            <motion.button whileTap={{ scale: 0.95 }} onClick={applyCoupon}
+              className="px-4 py-2.5 bg-[#FFC107] text-black text-xs font-black rounded-xl shadow-sm">
               تطبيق
             </motion.button>
           )}
@@ -199,15 +199,11 @@ export default function CartSection() {
         <AnimatePresence>
           {couponError && (
             <motion.p initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-              className="text-[#DC2626] text-[11px] font-bold mt-2 text-right">
-              {couponError}
-            </motion.p>
+              className="text-[#DC2626] text-[11px] font-bold mt-2 text-right">{couponError}</motion.p>
           )}
           {couponSuccess && (
             <motion.p initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-              className="text-green-600 text-[11px] font-bold mt-2 text-right">
-              تم تطبيق الكود بنجاح!
-            </motion.p>
+              className="text-green-600 text-[11px] font-bold mt-2 text-right">تم تطبيق الكود بنجاح!</motion.p>
           )}
         </AnimatePresence>
       </div>
@@ -223,10 +219,9 @@ export default function CartSection() {
         </div>
       </div>
 
-      {/* Order Summary */}
+      {/* Summary */}
       <div className="bg-white rounded-3xl p-5 shadow-lg border border-gray-50 mb-5 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-28 h-28 bg-[#FFC107]/10 rounded-full blur-2xl translate-x-10 -translate-y-10" />
-        <div className="absolute bottom-0 left-0 w-24 h-24 bg-[#DC2626]/5 rounded-full blur-xl -translate-x-8 translate-y-8" />
         <div className="relative z-10 space-y-2.5">
           <div className="flex justify-between">
             <span className="text-gray-500 font-black text-sm">المجموع الفرعي</span>
@@ -239,13 +234,12 @@ export default function CartSection() {
             </span>
           </div>
           {discountAmount > 0 && (
-            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }}
-              className="flex justify-between">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-between">
               <span className="text-green-600 font-black text-sm">خصم ({discountPercent}%)</span>
               <span className="font-black text-sm text-green-600">-{discountAmount} دج</span>
             </motion.div>
           )}
-          <div className="border-t-2 border-dashed border-gray-100 pt-3 mt-1">
+          <div className="border-t-2 border-dashed border-gray-100 pt-3">
             <div className="flex justify-between items-center">
               <span className="font-black text-base text-black">الإجمالي النهائي</span>
               <span className="font-black text-xl text-[#DC2626]">{finalTotal.toLocaleString()} دج</span>
@@ -254,7 +248,7 @@ export default function CartSection() {
         </div>
       </div>
 
-      {/* Order Button — Telegram */}
+      {/* Telegram Order Button */}
       <motion.button
         whileTap={{ scale: 0.98 }}
         onClick={handleOrder}
@@ -263,12 +257,11 @@ export default function CartSection() {
       >
         <span className="absolute inset-0 w-[200%] h-full bg-gradient-to-r from-transparent via-white/15 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
         <svg width="20" height="20" viewBox="0 0 24 24" fill="white" className="flex-shrink-0">
-          <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-2.007 9.455c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.87.766z"/>
+          <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-2.007 9.455c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.87.766z" />
         </svg>
         <span>إتمام الطلب عبر تيليغرام</span>
         <span className="font-black text-yellow-300">{finalTotal.toLocaleString()} دج</span>
       </motion.button>
-
       <p className="text-center text-[11px] text-gray-400 font-bold mt-3">
         سيتم التواصل معك عبر تيليغرام لتأكيد طلبك
       </p>

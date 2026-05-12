@@ -1,4 +1,11 @@
 export type Category = "sandwiches" | "milonj" | "specials" | "drinks" | "extras" | "history";
+export type SizeKey = "quarter" | "half" | "full";
+
+export interface SizeOptions {
+  quarter?: number;
+  half?: number;
+  full?: number;
+}
 
 export interface MenuItem {
   id: string;
@@ -10,108 +17,144 @@ export interface MenuItem {
   isPopular?: boolean;
   isNew?: boolean;
   spicy?: 0 | 1 | 2 | 3;
+  sizes?: SizeOptions;
 }
 
+export const SIZE_LABELS: Record<SizeKey, string> = {
+  quarter: "ربع",
+  half: "نص",
+  full: "طبق كامل",
+};
+
 export const MENU_ITEMS: MenuItem[] = [
-  // Sandwiches
+  // ── السانويشات ──────────────────────────────────────────────
   {
-    id: "s1",
-    name: "كبدة فيونداشي",
-    price: 450,
+    id: "s_freet",
+    name: "فريت",
+    price: 150,
     category: "sandwiches",
-    image: "/food/kabda_fiandashi.png",
-    description: "كبدة طازجة مع لحم مفروم وتتبيلة خاصة",
-    isPopular: true,
-    spicy: 2,
+    image: "https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?w=400&q=80",
+    description: "بطاطا مقلية مقرمشة",
+    spicy: 0,
+    sizes: { quarter: 100, half: 150 },
   },
   {
-    id: "s2",
-    name: "مرقاز شاورما",
-    price: 450,
-    category: "sandwiches",
-    image: "/food/marqaz_chawarma.png",
-    description: "مزيج رائع من المرقاز والشاورما اللذيذة",
-    isPopular: true,
-    spicy: 1,
-  },
-  {
-    id: "s3",
-    name: "مرقاز فرماج",
-    price: 300,
+    id: "s_freet_fromage",
+    name: "فريت فرماج",
+    price: 250,
     category: "sandwiches",
     image: "/food/marqaz_fromage.png",
-    description: "مرقاز مقرمش مع جبن سائل وخبز طازج",
+    description: "فريت مع جبن سائل",
     spicy: 0,
+    sizes: { quarter: 150, half: 250 },
   },
   {
-    id: "s4",
-    name: "مرقاز فيونداشي",
-    price: 450,
+    id: "s_marqaz",
+    name: "مرقاز",
+    price: 350,
     category: "sandwiches",
     image: "/food/marqaz_fiandashi.png",
-    description: "سجق المرقاز مع اللحم المفروم المتبل",
+    description: "سجق المرقاز المتبل",
     isPopular: true,
     spicy: 2,
+    sizes: { quarter: 250, half: 350 },
   },
   {
-    id: "s5",
-    name: "كبدة شاورما",
-    price: 500,
+    id: "s_fiandashi",
+    name: "فيونداشي",
+    price: 350,
     category: "sandwiches",
-    image: "/food/kabda_chawarma.png",
-    description: "شاورما دجاج مع كبدة متبلة ومقلية",
-    isNew: true,
-    spicy: 1,
+    image: "/food/kabda_fiandashi.png",
+    description: "لحم مفروم بتتبيلة خاصة",
+    isPopular: true,
+    spicy: 2,
+    sizes: { quarter: 250, half: 350 },
   },
   {
-    id: "s6",
-    name: "كبدة كبدة",
+    id: "s_chawarma",
+    name: "شاورما",
+    price: 350,
+    category: "sandwiches",
+    image: "/food/marqaz_chawarma.png",
+    description: "شاورما دجاج متبلة",
+    spicy: 1,
+    sizes: { quarter: 250, half: 350 },
+  },
+  {
+    id: "s_kabda",
+    name: "كبدة",
     price: 450,
     category: "sandwiches",
     image: "/food/kabda_kabda.png",
-    description: "كبدة مزدوجة مع صلصة الثوم وتوابل خاصة",
+    description: "كبدة مقلية بتوابل خاصة",
+    isNew: true,
     spicy: 1,
+    sizes: { quarter: 350, half: 450 },
   },
-  // Milonj
+  // ── سانويش ميلونج ────────────────────────────────────────────
   {
-    id: "m1",
+    id: "m_marqaz_fiandashi",
     name: "مرقاز فيونداشي ميلونج",
     price: 450,
     category: "milonj",
     image: "/food/marqaz_fiandashi.png",
-    description: "ميلونج خاص من المرقاز والفيونداشي",
+    description: "مزيج مرقاز وفيونداشي",
     isPopular: true,
     spicy: 2,
+    sizes: { quarter: 350, half: 450, full: 400 },
   },
   {
-    id: "m2",
-    name: "كبدة شاورما ميلونج",
+    id: "m_marqaz_chawarma",
+    name: "مرقاز شاورما ميلونج",
     price: 450,
     category: "milonj",
-    image: "/food/kabda_chawarma.png",
-    description: "ميلونج كبدة مقلية وشاورما",
+    image: "/food/marqaz_chawarma.png",
+    description: "مزيج مرقاز وشاورما",
     spicy: 1,
+    sizes: { quarter: 350, half: 450, full: 450 },
   },
   {
-    id: "m3",
+    id: "m_marqaz_kabda",
     name: "مرقاز كبدة ميلونج",
-    price: 500,
+    price: 550,
     category: "milonj",
-    image: "/food/kabda_fiandashi.png",
-    description: "مزيج غني من الكبدة والمرقاز",
+    image: "/food/kabda_chawarma.png",
+    description: "مزيج مرقاز وكبدة",
     isNew: true,
     spicy: 3,
+    sizes: { quarter: 400, half: 550, full: 450 },
   },
   {
-    id: "m4",
+    id: "m_kabda_chawarma",
+    name: "كبدة شاورما ميلونج",
+    price: 550,
+    category: "milonj",
+    image: "/food/kabda_chawarma.png",
+    description: "مزيج كبدة وشاورما",
+    spicy: 1,
+    sizes: { quarter: 400, half: 550, full: 500 },
+  },
+  {
+    id: "m_kabda_fiandashi",
+    name: "كبدة فيونداشي ميلونج",
+    price: 550,
+    category: "milonj",
+    image: "/food/kabda_fiandashi.png",
+    description: "مزيج كبدة وفيونداشي",
+    spicy: 2,
+    sizes: { quarter: 400, half: 550, full: 450 },
+  },
+  {
+    id: "m_chawarma_fiandashi",
     name: "شاورما فيونداشي ميلونج",
     price: 450,
     category: "milonj",
     image: "/food/marqaz_chawarma.png",
-    description: "ميلونج الشاورما والفيونداشي المميز",
+    description: "مزيج شاورما وفيونداشي",
     spicy: 1,
+    sizes: { quarter: 350, half: 450, full: 450 },
   },
-  // Specials
+  // ── عروض ─────────────────────────────────────────────────────
   {
     id: "sp1",
     name: "عرض ميسو كومبو",
@@ -131,7 +174,7 @@ export const MENU_ITEMS: MenuItem[] = [
     description: "3 سندويتشات + 3 مشروبات",
     spicy: 0,
   },
-  // Drinks
+  // ── مشروبات ──────────────────────────────────────────────────
   {
     id: "d1",
     name: "مشروب صغير",
@@ -146,7 +189,7 @@ export const MENU_ITEMS: MenuItem[] = [
     category: "drinks",
     image: "https://images.unsplash.com/photo-1527960471264-932f39eb5846?w=400&q=80",
   },
-  // Extras
+  // ── إضافات ───────────────────────────────────────────────────
   {
     id: "e1",
     name: "زيتون",

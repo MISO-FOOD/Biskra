@@ -1,16 +1,21 @@
 import { createContext, useContext, useState, useCallback } from "react";
-import type { MenuItem } from "@/data/menu";
+import type { MenuItem, SizeKey } from "@/data/menu";
+import { SIZE_LABELS } from "@/data/menu";
 
 export interface CartItem {
   item: MenuItem;
   quantity: number;
+  cartKey: string;     // unique: item.id + '-' + size
+  size?: SizeKey;
+  sizeLabel?: string;
+  sizePrice: number;   // actual price for chosen size
 }
 
 interface CartContextType {
   items: CartItem[];
-  addItem: (item: MenuItem) => void;
-  removeItem: (id: string) => void;
-  updateQuantity: (id: string, qty: number) => void;
+  addItem: (item: MenuItem, size?: SizeKey, sizePrice?: number) => void;
+  removeItem: (cartKey: string) => void;
+  updateQuantity: (cartKey: string, qty: number) => void;
   clearCart: () => void;
   totalItems: number;
   subtotal: number;
@@ -25,28 +30,32 @@ const CartContext = createContext<CartContextType | null>(null);
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
 
-  const addItem = useCallback((item: MenuItem) => {
+  const addItem = useCallback((item: MenuItem, size?: SizeKey, sizePrice?: number) => {
+    const resolvedPrice = sizePrice ?? item.price;
+    const cartKey = size ? `${item.id}-${size}` : item.id;
+    const sizeLabel = size ? SIZE_LABELS[size] : undefined;
+
     setItems((prev) => {
-      const existing = prev.find((ci) => ci.item.id === item.id);
+      const existing = prev.find((ci) => ci.cartKey === cartKey);
       if (existing) {
         return prev.map((ci) =>
-          ci.item.id === item.id ? { ...ci, quantity: ci.quantity + 1 } : ci
+          ci.cartKey === cartKey ? { ...ci, quantity: ci.quantity + 1 } : ci
         );
       }
-      return [...prev, { item, quantity: 1 }];
+      return [...prev, { item, quantity: 1, cartKey, size, sizeLabel, sizePrice: resolvedPrice }];
     });
   }, []);
 
-  const removeItem = useCallback((id: string) => {
-    setItems((prev) => prev.filter((ci) => ci.item.id !== id));
+  const removeItem = useCallback((cartKey: string) => {
+    setItems((prev) => prev.filter((ci) => ci.cartKey !== cartKey));
   }, []);
 
-  const updateQuantity = useCallback((id: string, qty: number) => {
+  const updateQuantity = useCallback((cartKey: string, qty: number) => {
     if (qty <= 0) {
-      setItems((prev) => prev.filter((ci) => ci.item.id !== id));
+      setItems((prev) => prev.filter((ci) => ci.cartKey !== cartKey));
     } else {
       setItems((prev) =>
-        prev.map((ci) => (ci.item.id === id ? { ...ci, quantity: qty } : ci))
+        prev.map((ci) => (ci.cartKey === cartKey ? { ...ci, quantity: qty } : ci))
       );
     }
   }, []);
@@ -54,8 +63,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const clearCart = useCallback(() => setItems([]), []);
 
   const totalItems = items.reduce((s, ci) => s + ci.quantity, 0);
-  const subtotal = items.reduce((s, ci) => s + ci.item.price * ci.quantity, 0);
-  
+  const subtotal = items.reduce((s, ci) => s + ci.sizePrice * ci.quantity, 0);
+
   const freeDeliveryThreshold = 1500;
   const deliveryFee = subtotal >= freeDeliveryThreshold ? 0 : 100;
   const total = subtotal > 0 ? subtotal + deliveryFee : 0;
@@ -63,18 +72,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <CartContext.Provider
-      value={{ 
-        items, 
-        addItem, 
-        removeItem, 
-        updateQuantity, 
-        clearCart, 
-        totalItems, 
-        subtotal, 
-        total, 
+      value={{
+        items,
+        addItem,
+        removeItem,
+        updateQuantity,
+        clearCart,
+        totalItems,
+        subtotal,
+        total,
         deliveryFee,
         freeDeliveryThreshold,
-        progressToFreeDelivery
+        progressToFreeDelivery,
       }}
     >
       {children}
