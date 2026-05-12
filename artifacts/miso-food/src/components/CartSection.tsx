@@ -1,58 +1,54 @@
 import { useState } from "react";
-import { Minus, Plus, Trash2, ShoppingCart, Tag, CheckCircle } from "lucide-react";
+import { Minus, Plus, Trash2, ShoppingCart, User, Phone, MapPin, MessageSquare, CheckCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/context/CartContext";
-
-const VALID_COUPONS: Record<string, number> = {
-  "MISO10": 10,
-  "MISO20": 20,
-  "WELCOME": 15,
-};
 
 export default function CartSection() {
   const {
     items, removeItem, updateQuantity,
-    subtotal, total, deliveryFee, clearCart,
-    freeDeliveryThreshold, progressToFreeDelivery,
+    subtotal, clearCart,
   } = useCart();
 
-  const [coupon, setCoupon] = useState("");
-  const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null);
-  const [couponError, setCouponError] = useState("");
-  const [couponSuccess, setCouponSuccess] = useState(false);
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [location, setLocation] = useState("");
+  const [note, setNote] = useState("");
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const discountPercent = appliedCoupon ? VALID_COUPONS[appliedCoupon] : 0;
-  const discountAmount = Math.round(subtotal * discountPercent / 100);
-  const finalTotal = total - discountAmount;
-
-  const applyCoupon = () => {
-    const code = coupon.trim().toUpperCase();
-    if (VALID_COUPONS[code]) {
-      setAppliedCoupon(code);
-      setCouponError("");
-      setCouponSuccess(true);
-      setTimeout(() => setCouponSuccess(false), 2000);
-    } else {
-      setCouponError("كود الخصم غير صحيح");
-      setTimeout(() => setCouponError(""), 2000);
-    }
+  const validate = () => {
+    const e: Record<string, string> = {};
+    if (!name.trim()) e.name = "الاسم مطلوب";
+    if (!phone.trim()) e.phone = "رقم الهاتف مطلوب";
+    if (!location.trim()) e.location = "مكان التوصيل مطلوب";
+    setErrors(e);
+    return Object.keys(e).length === 0;
   };
 
   const handleOrder = () => {
     if (items.length === 0) return;
+    if (!validate()) return;
+
     const lines = items
       .map((ci) => {
         const sizePart = ci.sizeLabel ? ` (${ci.sizeLabel})` : "";
-        return `${ci.item.name}${sizePart} x${ci.quantity} - ${ci.sizePrice * ci.quantity} دج`;
+        return `• ${ci.item.name}${sizePart} x${ci.quantity} — ${ci.sizePrice * ci.quantity} دج`;
       })
       .join("%0A");
-    const couponLine = appliedCoupon ? `%0A*كود الخصم:* ${appliedCoupon} (-${discountAmount} دج)` : "";
-    const msg = `*طلب جديد - ميسو فود*%0A%0A${lines}%0A${couponLine}%0A*المجموع:* ${subtotal} دج%0A*التوصيل:* ${deliveryFee === 0 ? "مجاني" : deliveryFee + " دج"}%0A*الإجمالي:* ${finalTotal} دج%0A%0A*الدفع:* عند الاستلام`;
+
+    const noteLine = note.trim() ? `%0A📝 *ملاحظة:* ${note}` : "";
+    const msg =
+      `🍔 *طلب جديد — ميسو فود*%0A%0A` +
+      `👤 *الاسم:* ${name}%0A` +
+      `📞 *الهاتف:* ${phone}%0A` +
+      `📍 *التوصيل إلى:* ${location}%0A%0A` +
+      `${lines}%0A%0A` +
+      `💰 *المجموع:* ${subtotal} دج%0A` +
+      `🚚 *سعر التوصيل:* يحدد بعد تأكيد الطلب%0A` +
+      `💵 *الدفع:* ادفع لما يوصل الطلب عندك` +
+      `${noteLine}`;
+
     window.open(`https://t.me/+213793149538?text=${msg}`, "_blank");
   };
-
-  const remainingForFreeDelivery = freeDeliveryThreshold - subtotal;
-  const isFreeDelivery = remainingForFreeDelivery <= 0;
 
   if (items.length === 0) {
     return (
@@ -93,26 +89,6 @@ export default function CartSection() {
           className="text-xs bg-red-50 text-[#DC2626] font-black px-3 py-1.5 rounded-xl border border-red-100">
           مسح الكل
         </motion.button>
-      </div>
-
-      {/* Free Delivery Progress */}
-      <div className={`rounded-2xl p-4 mb-4 border transition-colors ${isFreeDelivery ? "bg-green-50 border-green-200" : "bg-white border-[#FFC107]/30"}`}>
-        <div className="flex items-center gap-2 mb-2.5">
-          <div className={`w-7 h-7 rounded-full flex items-center justify-center ${isFreeDelivery ? "bg-green-500" : "bg-[#FFC107]"}`}>
-            <CheckCircle size={15} className="text-white" strokeWidth={2.5} />
-          </div>
-          <span className={`text-xs font-black ${isFreeDelivery ? "text-green-700" : "text-black"}`}>
-            {isFreeDelivery ? "تهانيك! لقد حصلت على توصيل مجاني" : `أضف ${remainingForFreeDelivery} دج للتوصيل المجاني`}
-          </span>
-        </div>
-        <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
-          <motion.div
-            className={`h-full rounded-full ${isFreeDelivery ? "bg-green-500" : "bg-[#FFC107]"}`}
-            initial={{ width: 0 }}
-            animate={{ width: `${progressToFreeDelivery * 100}%` }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-          />
-        </div>
       </div>
 
       {/* Items */}
@@ -162,65 +138,70 @@ export default function CartSection() {
         </AnimatePresence>
       </div>
 
-      {/* Coupon */}
+      {/* Customer Info Form */}
       <div className="bg-white rounded-2xl p-4 shadow-[0_2px_12px_rgba(0,0,0,0.06)] mb-4 border border-gray-50">
-        <div className="flex items-center gap-2 mb-3">
-          <Tag size={16} className="text-[#FFC107]" strokeWidth={2.5} />
-          <span className="text-sm font-black text-black">كود الخصم</span>
-          {appliedCoupon && (
-            <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }}
-              className="mr-auto text-[10px] font-black bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
-              -{discountPercent}% مفعّل
-            </motion.span>
-          )}
-        </div>
-        <div className="flex gap-2">
-          <input
-            value={coupon}
-            onChange={(e) => setCoupon(e.target.value.toUpperCase())}
-            onKeyDown={(e) => e.key === "Enter" && applyCoupon()}
-            placeholder="أدخل الكود هنا"
-            disabled={!!appliedCoupon}
-            className="flex-1 bg-gray-50 border border-gray-100 rounded-xl px-3 py-2.5 text-sm font-black text-black placeholder-gray-300 outline-none text-right focus:border-[#FFC107] transition-colors disabled:opacity-60"
-          />
-          {appliedCoupon ? (
-            <motion.button whileTap={{ scale: 0.95 }}
-              onClick={() => { setAppliedCoupon(null); setCoupon(""); }}
-              className="px-4 py-2.5 bg-red-50 text-[#DC2626] text-xs font-black rounded-xl border border-red-100">
-              إلغاء
-            </motion.button>
-          ) : (
-            <motion.button whileTap={{ scale: 0.95 }} onClick={applyCoupon}
-              className="px-4 py-2.5 bg-[#FFC107] text-black text-xs font-black rounded-xl shadow-sm">
-              تطبيق
-            </motion.button>
-          )}
-        </div>
-        <AnimatePresence>
-          {couponError && (
-            <motion.p initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-              className="text-[#DC2626] text-[11px] font-bold mt-2 text-right">{couponError}</motion.p>
-          )}
-          {couponSuccess && (
-            <motion.p initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-              className="text-green-600 text-[11px] font-bold mt-2 text-right">تم تطبيق الكود بنجاح!</motion.p>
-          )}
-        </AnimatePresence>
-      </div>
+        <h3 className="text-sm font-black text-black mb-4">معلومات الزبون</h3>
+        <div className="flex flex-col gap-3">
+          {/* Name */}
+          <div>
+            <div className={`flex items-center gap-2 bg-gray-50 rounded-xl px-3 py-2.5 border ${errors.name ? "border-[#DC2626]" : "border-gray-100"} transition-colors`}>
+              <User size={15} className="text-gray-400 flex-shrink-0" />
+              <input
+                value={name}
+                onChange={(e) => { setName(e.target.value); setErrors((p) => ({ ...p, name: "" })); }}
+                placeholder="الاسم"
+                className="flex-1 bg-transparent text-sm font-black text-black placeholder-gray-300 outline-none text-right"
+              />
+            </div>
+            {errors.name && <p className="text-[#DC2626] text-[11px] font-bold mt-1 text-right">{errors.name}</p>}
+          </div>
 
-      {/* Payment method */}
-      <div className="bg-green-50 border border-green-200 rounded-2xl p-3.5 mb-4 flex items-center gap-3">
-        <div className="w-9 h-9 rounded-xl bg-green-500 flex items-center justify-center flex-shrink-0">
-          <CheckCircle size={18} className="text-white" strokeWidth={2.5} />
-        </div>
-        <div>
-          <p className="text-sm font-black text-green-800">الدفع عند الاستلام</p>
-          <p className="text-[11px] text-green-600 font-bold">ادفع لما يوصل الطلب عندك</p>
+          {/* Phone */}
+          <div>
+            <div className={`flex items-center gap-2 bg-gray-50 rounded-xl px-3 py-2.5 border ${errors.phone ? "border-[#DC2626]" : "border-gray-100"} transition-colors`}>
+              <Phone size={15} className="text-gray-400 flex-shrink-0" />
+              <input
+                value={phone}
+                onChange={(e) => { setPhone(e.target.value); setErrors((p) => ({ ...p, phone: "" })); }}
+                placeholder="رقم الهاتف"
+                type="tel"
+                inputMode="tel"
+                className="flex-1 bg-transparent text-sm font-black text-black placeholder-gray-300 outline-none text-right"
+              />
+            </div>
+            {errors.phone && <p className="text-[#DC2626] text-[11px] font-bold mt-1 text-right">{errors.phone}</p>}
+          </div>
+
+          {/* Location */}
+          <div>
+            <div className={`flex items-center gap-2 bg-gray-50 rounded-xl px-3 py-2.5 border ${errors.location ? "border-[#DC2626]" : "border-gray-100"} transition-colors`}>
+              <MapPin size={15} className="text-gray-400 flex-shrink-0" />
+              <input
+                value={location}
+                onChange={(e) => { setLocation(e.target.value); setErrors((p) => ({ ...p, location: "" })); }}
+                placeholder="مكان التوصيل"
+                className="flex-1 bg-transparent text-sm font-black text-black placeholder-gray-300 outline-none text-right"
+              />
+            </div>
+            {errors.location && <p className="text-[#DC2626] text-[11px] font-bold mt-1 text-right">{errors.location}</p>}
+          </div>
+
+          {/* Note */}
+          <div className="flex items-start gap-2 bg-gray-50 rounded-xl px-3 py-2.5 border border-gray-100">
+            <MessageSquare size={15} className="text-gray-400 flex-shrink-0 mt-0.5" />
+            <textarea
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              placeholder="ملاحظة (اختياري)"
+              rows={2}
+              className="flex-1 bg-transparent text-sm font-black text-black placeholder-gray-300 outline-none text-right resize-none"
+            />
+          </div>
         </div>
       </div>
 
       {/* Summary */}
-      <div className="bg-white rounded-3xl p-5 shadow-lg border border-gray-50 mb-5 relative overflow-hidden">
+      <div className="bg-white rounded-3xl p-5 shadow-lg border border-gray-50 mb-4 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-28 h-28 bg-[#FFC107]/10 rounded-full blur-2xl translate-x-10 -translate-y-10" />
         <div className="relative z-10 space-y-2.5">
           <div className="flex justify-between">
@@ -229,26 +210,26 @@ export default function CartSection() {
           </div>
           <div className="flex justify-between">
             <span className="text-gray-500 font-black text-sm">التوصيل</span>
-            <span className={`font-black text-sm ${deliveryFee === 0 ? "text-green-500" : ""}`}>
-              {deliveryFee === 0 ? "مجاني" : `${deliveryFee} دج`}
-            </span>
+            <span className="font-black text-sm text-[#FFC107]">يحدد بعد تأكيد الطلب</span>
           </div>
-          {discountAmount > 0 && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-between">
-              <span className="text-green-600 font-black text-sm">خصم ({discountPercent}%)</span>
-              <span className="font-black text-sm text-green-600">-{discountAmount} دج</span>
-            </motion.div>
-          )}
           <div className="border-t-2 border-dashed border-gray-100 pt-3">
             <div className="flex justify-between items-center">
-              <span className="font-black text-base text-black">الإجمالي النهائي</span>
-              <span className="font-black text-xl text-[#DC2626]">{finalTotal.toLocaleString()} دج</span>
+              <span className="font-black text-base text-black">المجموع</span>
+              <span className="font-black text-xl text-[#DC2626]">{subtotal.toLocaleString()} دج</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Telegram Order Button */}
+      {/* Payment note */}
+      <div className="bg-green-50 border border-green-200 rounded-2xl p-3.5 mb-4 flex items-center gap-3">
+        <div className="w-9 h-9 rounded-xl bg-green-500 flex items-center justify-center flex-shrink-0">
+          <CheckCircle size={18} className="text-white" strokeWidth={2.5} />
+        </div>
+        <p className="text-sm font-black text-green-800">ادفع لما يوصل الطلب عندك</p>
+      </div>
+
+      {/* Order Button */}
       <motion.button
         whileTap={{ scale: 0.98 }}
         onClick={handleOrder}
@@ -259,11 +240,11 @@ export default function CartSection() {
         <svg width="20" height="20" viewBox="0 0 24 24" fill="white" className="flex-shrink-0">
           <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-2.007 9.455c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.87.766z" />
         </svg>
-        <span>إتمام الطلب عبر تيليغرام</span>
-        <span className="font-black text-yellow-300">{finalTotal.toLocaleString()} دج</span>
+        <span>إرسال الطلب للبوت</span>
+        <span className="font-black text-yellow-300">{subtotal.toLocaleString()} دج</span>
       </motion.button>
       <p className="text-center text-[11px] text-gray-400 font-bold mt-3">
-        سيتم التواصل معك عبر تيليغرام لتأكيد طلبك
+        سيتم التواصل معك عبر تيليغرام لتأكيد الطلب وتحديد سعر التوصيل
       </p>
     </div>
   );

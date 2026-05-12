@@ -21,13 +21,13 @@ export interface MenuItem {
 }
 
 export const SIZE_LABELS: Record<SizeKey, string> = {
-  quarter: "ربع",
-  half: "نص",
+  quarter: "نص",
+  half: "غير ربع",
   full: "طبق كامل",
 };
 
 export const MENU_ITEMS: MenuItem[] = [
-  // ── السانويشات ──────────────────────────────────────────────
+  // ── الساندويتشات ──────────────────────────────────────────────
   {
     id: "s_freet",
     name: "فريت",
@@ -91,7 +91,7 @@ export const MENU_ITEMS: MenuItem[] = [
     spicy: 1,
     sizes: { quarter: 350, half: 450 },
   },
-  // ── سانويش ميلونج ────────────────────────────────────────────
+  // ── ساندويتش ميلونج ────────────────────────────────────────────
   {
     id: "m_marqaz_fiandashi",
     name: "مرقاز فيونداشي ميلونج",
@@ -176,18 +176,52 @@ export const MENU_ITEMS: MenuItem[] = [
   },
   // ── مشروبات ──────────────────────────────────────────────────
   {
-    id: "d1",
-    name: "مشروب صغير",
-    price: 70,
+    id: "d_farha_33",
+    name: "Farha فرحة 33cl",
+    price: 50,
     category: "drinks",
     image: "https://images.unsplash.com/photo-1581636625402-29b2a704ef13?w=400&q=80",
+    description: "Farha | فرحة — 33cl",
   },
   {
-    id: "d2",
-    name: "مشروب كبير",
+    id: "d_farha_1l",
+    name: "Farha فرحة 1L",
+    price: 100,
+    category: "drinks",
+    image: "https://images.unsplash.com/photo-1581636625402-29b2a704ef13?w=400&q=80",
+    description: "Farha | فرحة — 1L",
+  },
+  {
+    id: "d_hamoud_33",
+    name: "Hamoud حمود 33cl",
+    price: 60,
+    category: "drinks",
+    image: "https://images.unsplash.com/photo-1527960471264-932f39eb5846?w=400&q=80",
+    description: "Hamoud | حمود — 33cl",
+  },
+  {
+    id: "d_hamoud_1l",
+    name: "Hamoud حمود 1L",
     price: 120,
     category: "drinks",
     image: "https://images.unsplash.com/photo-1527960471264-932f39eb5846?w=400&q=80",
+    description: "Hamoud | حمود — 1L",
+  },
+  {
+    id: "d_jus_33",
+    name: "Jus عصير 33cl",
+    price: 70,
+    category: "drinks",
+    image: "https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=400&q=80",
+    description: "Jus | عصير — 33cl",
+  },
+  {
+    id: "d_coca",
+    name: "Coca-Cola كوكا كولا",
+    price: 150,
+    category: "drinks",
+    image: "https://images.unsplash.com/photo-1554866585-cd94860890b7?w=400&q=80",
+    description: "Coca-Cola | كوكا كولا",
   },
   // ── إضافات ───────────────────────────────────────────────────
   {
@@ -214,10 +248,10 @@ export const MENU_ITEMS: MenuItem[] = [
 ];
 
 export const CATEGORIES = [
-  { id: "sandwiches" as Category, label: "السانويشات", icon: "burger" },
-  { id: "milonj" as Category, label: "السانويش ميلونج", icon: "doubleBurger" },
+  { id: "sandwiches" as Category, label: "الساندويتشات", icon: "burger" },
+  { id: "milonj" as Category, label: "الساندويتش ميلونج", icon: "doubleBurger" },
   { id: "extras" as Category, label: "إضافات", icon: "plus" },
-  { id: "drinks" as Category, label: "المشروبات", icon: "drink" },
+  { id: "drinks" as Category, label: "Boissons مشروبات", icon: "drink" },
   { id: "specials" as Category, label: "العروض", icon: "fire" },
   { id: "history" as Category, label: "الطلبات السابقة", icon: "clock" },
 ];
