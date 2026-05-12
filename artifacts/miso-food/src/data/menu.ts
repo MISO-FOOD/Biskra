@@ -9,22 +9,19 @@ export interface MenuItem {
   description?: string;
   isPopular?: boolean;
   isNew?: boolean;
-  rating?: number;
-  ratingCount?: number;
   spicy?: 0 | 1 | 2 | 3;
 }
 
 export const MENU_ITEMS: MenuItem[] = [
+  // Sandwiches
   {
     id: "s1",
     name: "كبدة فيونداشي",
     price: 450,
     category: "sandwiches",
-    image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=400&q=80",
+    image: "/food/kabda_fiandashi.png",
     description: "كبدة طازجة مع لحم مفروم وتتبيلة خاصة",
     isPopular: true,
-    rating: 4.9,
-    ratingCount: 214,
     spicy: 2,
   },
   {
@@ -32,22 +29,18 @@ export const MENU_ITEMS: MenuItem[] = [
     name: "مرقاز شاورما",
     price: 450,
     category: "sandwiches",
-    image: "https://images.unsplash.com/photo-1509722747041-616f39b57569?w=400&q=80",
+    image: "/food/marqaz_chawarma.png",
     description: "مزيج رائع من المرقاز والشاورما اللذيذة",
     isPopular: true,
-    rating: 4.8,
-    ratingCount: 189,
     spicy: 1,
   },
   {
     id: "s3",
-    name: "فريت فرماج",
-    price: 250,
+    name: "مرقاز فرماج",
+    price: 300,
     category: "sandwiches",
-    image: "https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?w=400&q=80",
-    description: "بطاطا مقلية مقرمشة مع جبن سائل",
-    rating: 4.6,
-    ratingCount: 97,
+    image: "/food/marqaz_fromage.png",
+    description: "مرقاز مقرمش مع جبن سائل وخبز طازج",
     spicy: 0,
   },
   {
@@ -55,11 +48,9 @@ export const MENU_ITEMS: MenuItem[] = [
     name: "مرقاز فيونداشي",
     price: 450,
     category: "sandwiches",
-    image: "https://images.unsplash.com/photo-1554433607-66b5efe9d304?w=400&q=80",
+    image: "/food/marqaz_fiandashi.png",
     description: "سجق المرقاز مع اللحم المفروم المتبل",
     isPopular: true,
-    rating: 4.7,
-    ratingCount: 156,
     spicy: 2,
   },
   {
@@ -67,22 +58,18 @@ export const MENU_ITEMS: MenuItem[] = [
     name: "كبدة شاورما",
     price: 500,
     category: "sandwiches",
-    image: "https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=400&q=80",
+    image: "/food/kabda_chawarma.png",
     description: "شاورما دجاج مع كبدة متبلة ومقلية",
     isNew: true,
-    rating: 4.9,
-    ratingCount: 43,
     spicy: 1,
   },
   {
     id: "s6",
-    name: "شاورما فيونداشي",
+    name: "كبدة كبدة",
     price: 450,
     category: "sandwiches",
-    image: "https://images.unsplash.com/photo-1484723091739-30a097e8f929?w=400&q=80",
-    description: "ميكس شاورما مع فيونداشي وصلصة الثوم",
-    rating: 4.7,
-    ratingCount: 128,
+    image: "/food/kabda_kabda.png",
+    description: "كبدة مزدوجة مع صلصة الثوم وتوابل خاصة",
     spicy: 1,
   },
   // Milonj
@@ -91,11 +78,9 @@ export const MENU_ITEMS: MenuItem[] = [
     name: "مرقاز فيونداشي ميلونج",
     price: 450,
     category: "milonj",
-    image: "https://images.unsplash.com/photo-1554433607-66b5efe9d304?w=400&q=80",
+    image: "/food/marqaz_fiandashi.png",
     description: "ميلونج خاص من المرقاز والفيونداشي",
     isPopular: true,
-    rating: 4.8,
-    ratingCount: 201,
     spicy: 2,
   },
   {
@@ -103,10 +88,8 @@ export const MENU_ITEMS: MenuItem[] = [
     name: "كبدة شاورما ميلونج",
     price: 450,
     category: "milonj",
-    image: "https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=400&q=80",
+    image: "/food/kabda_chawarma.png",
     description: "ميلونج كبدة مقلية وشاورما",
-    rating: 4.7,
-    ratingCount: 134,
     spicy: 1,
   },
   {
@@ -114,11 +97,9 @@ export const MENU_ITEMS: MenuItem[] = [
     name: "مرقاز كبدة ميلونج",
     price: 500,
     category: "milonj",
-    image: "https://images.unsplash.com/photo-1509722747041-616f39b57569?w=400&q=80",
+    image: "/food/kabda_fiandashi.png",
     description: "مزيج غني من الكبدة والمرقاز",
     isNew: true,
-    rating: 4.9,
-    ratingCount: 67,
     spicy: 3,
   },
   {
@@ -126,10 +107,8 @@ export const MENU_ITEMS: MenuItem[] = [
     name: "شاورما فيونداشي ميلونج",
     price: 450,
     category: "milonj",
-    image: "https://images.unsplash.com/photo-1484723091739-30a097e8f929?w=400&q=80",
+    image: "/food/marqaz_chawarma.png",
     description: "ميلونج الشاورما والفيونداشي المميز",
-    rating: 4.6,
-    ratingCount: 89,
     spicy: 1,
   },
   // Specials
@@ -141,8 +120,6 @@ export const MENU_ITEMS: MenuItem[] = [
     image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&q=80",
     description: "سندويتش + مشروب + إضافة",
     isPopular: true,
-    rating: 4.9,
-    ratingCount: 312,
     spicy: 0,
   },
   {
@@ -152,8 +129,6 @@ export const MENU_ITEMS: MenuItem[] = [
     category: "specials",
     image: "https://images.unsplash.com/photo-1553979459-d2229ba7433b?w=400&q=80",
     description: "3 سندويتشات + 3 مشروبات",
-    rating: 4.8,
-    ratingCount: 76,
     spicy: 0,
   },
   // Drinks
@@ -163,8 +138,6 @@ export const MENU_ITEMS: MenuItem[] = [
     price: 70,
     category: "drinks",
     image: "https://images.unsplash.com/photo-1581636625402-29b2a704ef13?w=400&q=80",
-    rating: 4.5,
-    ratingCount: 55,
   },
   {
     id: "d2",
@@ -172,8 +145,6 @@ export const MENU_ITEMS: MenuItem[] = [
     price: 120,
     category: "drinks",
     image: "https://images.unsplash.com/photo-1527960471264-932f39eb5846?w=400&q=80",
-    rating: 4.6,
-    ratingCount: 82,
   },
   // Extras
   {
@@ -182,8 +153,6 @@ export const MENU_ITEMS: MenuItem[] = [
     price: 50,
     category: "extras",
     image: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400&q=80",
-    rating: 4.4,
-    ratingCount: 31,
   },
   {
     id: "e2",
@@ -191,8 +160,6 @@ export const MENU_ITEMS: MenuItem[] = [
     price: 50,
     category: "extras",
     image: "https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?w=400&q=80",
-    rating: 4.5,
-    ratingCount: 44,
   },
   {
     id: "e3",
@@ -200,8 +167,6 @@ export const MENU_ITEMS: MenuItem[] = [
     price: 100,
     category: "extras",
     image: "https://images.unsplash.com/photo-1585325701956-60dd9c8399b6?w=400&q=80",
-    rating: 4.3,
-    ratingCount: 28,
   },
 ];
 
