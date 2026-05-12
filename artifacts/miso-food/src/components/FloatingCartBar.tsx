@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingCart, ArrowLeft } from "lucide-react";
-import { useCart } from "@/context/CartContext";
+import { useCart } from "@/context/useCart";
 
 interface FloatingCartBarProps {
   onOpenCart: () => void;

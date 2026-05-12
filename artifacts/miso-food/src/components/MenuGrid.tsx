@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Plus, Flame, ArrowLeft, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useCart } from "@/context/CartContext";
+import { useCart } from "@/context/useCart";
 import type { MenuItem, Category, SizeKey } from "@/data/menu";
 import { MENU_ITEMS, CATEGORIES, SIZE_LABELS } from "@/data/menu";
 

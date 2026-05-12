@@ -29,26 +29,6 @@ export const SIZE_LABELS: Record<SizeKey, string> = {
 export const MENU_ITEMS: MenuItem[] = [
   // ── الساندويتشات ──────────────────────────────────────────────
   {
-    id: "s_freet",
-    name: "فريت",
-    price: 150,
-    category: "sandwiches",
-    image: "https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?w=400&q=80",
-    description: "بطاطا مقلية مقرمشة",
-    spicy: 0,
-    sizes: { quarter: 100, half: 150 },
-  },
-  {
-    id: "s_freet_fromage",
-    name: "فريت فرماج",
-    price: 250,
-    category: "sandwiches",
-    image: "/food/marqaz_fromage.png",
-    description: "فريت مع جبن سائل",
-    spicy: 0,
-    sizes: { quarter: 150, half: 250 },
-  },
-  {
     id: "s_marqaz",
     name: "مرقاز",
     price: 350,
@@ -224,6 +204,26 @@ export const MENU_ITEMS: MenuItem[] = [
     description: "Coca-Cola | كوكا كولا",
   },
   // ── إضافات ───────────────────────────────────────────────────
+  {
+    id: "s_freet",
+    name: "فريت",
+    price: 150,
+    category: "extras",
+    image: "/item_fries.png",
+    description: "بطاطا مقلية مقرمشة",
+    spicy: 0,
+    sizes: { quarter: 100, half: 150 },
+  },
+  {
+    id: "s_freet_fromage",
+    name: "فريت فرماج",
+    price: 250,
+    category: "extras",
+    image: "/item_fries.png",
+    description: "فريت مع جبن سائل",
+    spicy: 0,
+    sizes: { quarter: 150, half: 250 },
+  },
   {
     id: "e1",
     name: "زيتون",

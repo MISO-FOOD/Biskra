@@ -25,7 +25,7 @@ interface CartContextType {
   progressToFreeDelivery: number;
 }
 
-const CartContext = createContext<CartContextType | null>(null);
+export const CartContext = createContext<CartContextType | null>(null);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
@@ -91,8 +91,3 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function useCart() {
-  const ctx = useContext(CartContext);
-  if (!ctx) throw new Error("useCart must be used within CartProvider");
-  return ctx;
-}

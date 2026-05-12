@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Minus, Plus, Trash2, ShoppingCart, User, Phone, MapPin, MessageSquare, CheckCircle, ClipboardCheck, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useCart } from "@/context/CartContext";
+import { useCart } from "@/context/useCart";
 
 const BOT_TOKEN = import.meta.env.VITE_TELEGRAM_BOT_TOKEN as string | undefined;
 const CHAT_ID   = import.meta.env.VITE_TELEGRAM_CHAT_ID   as string | undefined;

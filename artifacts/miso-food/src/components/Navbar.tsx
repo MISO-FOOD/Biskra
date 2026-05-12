@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Menu, Search, ShoppingCart, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useCart } from "@/context/CartContext";
+import { useCart } from "@/context/useCart";
 import { MENU_ITEMS } from "@/data/menu";
 import mascotImg from "@assets/image_1778558012694.png";
 

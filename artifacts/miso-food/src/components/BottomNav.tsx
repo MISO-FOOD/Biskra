@@ -1,6 +1,6 @@
 import { Home as HomeIcon, UtensilsCrossed, ShoppingCart, ClipboardList } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useCart } from "@/context/CartContext";
+import { useCart } from "@/context/useCart";
 
 interface BottomNavProps {
   activeTab: string;
