@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Star, Flame, TrendingUp } from "lucide-react";
+import { Plus, Flame, TrendingUp } from "lucide-react";
 import { motion } from "framer-motion";
 import { useCart } from "@/context/CartContext";
 import { MENU_ITEMS } from "@/data/menu";
@@ -33,12 +33,6 @@ function PopularCard({ item, index }: { item: MenuItem; index: number }) {
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
       </div>
       <div className="p-2.5">
-        {item.rating && (
-          <div className="flex items-center gap-1 mb-1">
-            <Star size={10} fill="#FFC107" className="text-[#FFC107]" />
-            <span className="text-[10px] font-black">{item.rating}</span>
-          </div>
-        )}
         <h4 className="text-[12px] font-black text-black leading-tight mb-1.5 line-clamp-1">{item.name}</h4>
         <div className="flex items-center justify-between">
           <span className="text-[13px] font-black text-[#DC2626]">{item.price}<span className="text-[10px]"> دج</span></span>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Star, Flame, ArrowLeft } from "lucide-react";
+import { Plus, Flame, ArrowLeft } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/context/CartContext";
 import type { MenuItem, Category } from "@/data/menu";
@@ -69,17 +69,10 @@ function MenuCard({ item, index }: { item: MenuItem; index: number }) {
 
       {/* Content */}
       <div className="p-3 flex flex-col flex-1 gap-1.5">
-        {/* Rating row */}
-        {item.rating && (
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1">
-              <Star size={11} fill="#FFC107" className="text-[#FFC107]" />
-              <span className="text-[11px] font-black text-black">{item.rating}</span>
-              <span className="text-[10px] text-gray-400 font-bold">({item.ratingCount})</span>
-            </div>
-            {item.spicy !== undefined && item.spicy > 0 && (
-              <SpicyDots level={item.spicy} />
-            )}
+        {/* Spicy level row */}
+        {item.spicy !== undefined && item.spicy > 0 && (
+          <div className="flex items-center justify-end">
+            <SpicyDots level={item.spicy} />
           </div>
         )}
 

@@ -8,9 +8,8 @@ import MenuGrid from "@/components/MenuGrid";
 import FeaturesBar from "@/components/FeaturesBar";
 import CartSection from "@/components/CartSection";
 import BottomNav from "@/components/BottomNav";
-import CustomerReviews from "@/components/CustomerReviews";
 import PopularSection from "@/components/PopularSection";
-import FloatingWhatsApp from "@/components/FloatingWhatsApp";
+import FloatingTelegram from "@/components/FloatingWhatsApp";
 import FloatingCartBar from "@/components/FloatingCartBar";
 import type { Category } from "@/data/menu";
 import { ClipboardList } from "lucide-react";
@@ -26,6 +25,13 @@ const pageTransition = { type: "tween", ease: "easeOut", duration: 0.25 };
 export default function Home() {
   const [activeCategory, setActiveCategory] = useState<Category>("sandwiches");
   const [activeTab, setActiveTab] = useState("home");
+
+  const handleTabChange = (tab: string) => {
+    if (tab === "menu") {
+      setActiveCategory("sandwiches");
+    }
+    setActiveTab(tab);
+  };
 
   const goToCart = () => setActiveTab("cart");
 
@@ -50,13 +56,10 @@ export default function Home() {
                 <CategoryTabs active={activeCategory} onChange={setActiveCategory} />
                 <MenuGrid category={activeCategory} />
               </div>
-              <div className="bg-white mt-1">
-                <CustomerReviews />
-              </div>
             </motion.div>
           )}
 
-          {/* MENU */}
+          {/* MENU — always starts on sandwiches */}
           {activeTab === "menu" && (
             <motion.div key="menu" initial="initial" animate="in" exit="out"
               variants={pageVariants} transition={pageTransition} className="flex flex-col pt-3">
@@ -92,7 +95,7 @@ export default function Home() {
               <p className="text-gray-400 font-bold text-sm">قم بإجراء طلبك الأول لتظهر هنا</p>
               <motion.button
                 whileTap={{ scale: 0.95 }}
-                onClick={() => setActiveTab("menu")}
+                onClick={() => handleTabChange("menu")}
                 className="mt-6 bg-[#FFC107] text-black font-black px-8 py-3 rounded-2xl shadow-md"
               >
                 تصفح القائمة
@@ -103,11 +106,9 @@ export default function Home() {
         </AnimatePresence>
       </main>
 
-      {/* Floating cart bar — shows when cart has items and not on cart tab */}
       {activeTab !== "cart" && <FloatingCartBar onOpenCart={goToCart} />}
-
-      <FloatingWhatsApp />
-      <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
+      <FloatingTelegram />
+      <BottomNav activeTab={activeTab} onTabChange={handleTabChange} />
     </div>
   );
 }

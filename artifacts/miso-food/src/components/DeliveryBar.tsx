@@ -10,7 +10,6 @@ export default function DeliveryBar() {
         transition={{ duration: 0.3 }}
         className="bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.07)] p-3 flex items-center justify-between border border-gray-50 cursor-pointer active:scale-[0.99] transition-transform"
       >
-        {/* Location */}
         <div className="flex items-center gap-2.5">
           <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center flex-shrink-0">
             <MapPin className="w-5 h-5 text-[#DC2626]" strokeWidth={2.5} />
@@ -18,15 +17,14 @@ export default function DeliveryBar() {
           <div>
             <p className="text-[10px] text-gray-400 font-bold mb-0.5 leading-none">التوصيل إلى</p>
             <div className="flex items-center gap-1">
-              <span className="text-[13px] font-black text-black">حي سايحي 2 باتنة</span>
+              <span className="text-[13px] font-black text-black">حي سايحي 2 بسكرة</span>
               <ChevronDown className="w-3.5 h-3.5 text-gray-400" strokeWidth={2.5} />
             </div>
           </div>
         </div>
 
-        {/* Right: delivery info + button */}
         <div className="flex items-center gap-2">
-          <div className="hidden xs:flex flex-col items-end">
+          <div className="flex flex-col items-end">
             <div className="flex items-center gap-1">
               <Clock size={10} className="text-gray-400" />
               <span className="text-[10px] text-gray-400 font-bold">30-45 دقيقة</span>

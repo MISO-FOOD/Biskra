@@ -37,8 +37,8 @@ export default function CartSection() {
     if (items.length === 0) return;
     const lines = items.map((ci) => `${ci.item.name} x${ci.quantity} - ${ci.item.price * ci.quantity} دج`).join("%0A");
     const couponLine = appliedCoupon ? `%0A*كود الخصم:* ${appliedCoupon} (-${discountAmount} دج)` : "";
-    const msg = `*طلب جديد - ميسو فود*%0A%0A${lines}%0A${couponLine}%0A*المجموع:* ${subtotal} دج%0A*التوصيل:* ${deliveryFee === 0 ? "مجاني" : deliveryFee + " دج"}%0A*الإجمالي:* ${finalTotal} دج`;
-    window.open(`https://wa.me/213793149538?text=${msg}`, "_blank");
+    const msg = `*طلب جديد - ميسو فود*%0A%0A${lines}%0A${couponLine}%0A*المجموع:* ${subtotal} دج%0A*التوصيل:* ${deliveryFee === 0 ? "مجاني" : deliveryFee + " دج"}%0A*الإجمالي:* ${finalTotal} دج%0A%0A*الدفع:* عند الاستلام`;
+    window.open(`https://t.me/+213793149538?text=${msg}`, "_blank");
   };
 
   const remainingForFreeDelivery = freeDeliveryThreshold - subtotal;
@@ -212,6 +212,17 @@ export default function CartSection() {
         </AnimatePresence>
       </div>
 
+      {/* Payment method */}
+      <div className="bg-green-50 border border-green-200 rounded-2xl p-3.5 mb-4 flex items-center gap-3">
+        <div className="w-9 h-9 rounded-xl bg-green-500 flex items-center justify-center flex-shrink-0">
+          <CheckCircle size={18} className="text-white" strokeWidth={2.5} />
+        </div>
+        <div>
+          <p className="text-sm font-black text-green-800">الدفع عند الاستلام</p>
+          <p className="text-[11px] text-green-600 font-bold">ادفع لما يوصل الطلب عندك</p>
+        </div>
+      </div>
+
       {/* Order Summary */}
       <div className="bg-white rounded-3xl p-5 shadow-lg border border-gray-50 mb-5 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-28 h-28 bg-[#FFC107]/10 rounded-full blur-2xl translate-x-10 -translate-y-10" />
@@ -243,20 +254,23 @@ export default function CartSection() {
         </div>
       </div>
 
-      {/* Order Button */}
+      {/* Order Button — Telegram */}
       <motion.button
         whileTap={{ scale: 0.98 }}
         onClick={handleOrder}
-        className="w-full relative overflow-hidden bg-[#DC2626] text-white font-black text-base py-4 rounded-2xl shadow-[0_8px_24px_rgba(220,38,38,0.35)] flex items-center justify-center gap-3 group"
+        className="w-full relative overflow-hidden text-white font-black text-base py-4 rounded-2xl shadow-[0_8px_24px_rgba(34,158,217,0.35)] flex items-center justify-center gap-3 group"
+        style={{ background: "linear-gradient(135deg, #229ED9 0%, #1A85B8 100%)" }}
       >
         <span className="absolute inset-0 w-[200%] h-full bg-gradient-to-r from-transparent via-white/15 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-        <ShoppingCart size={20} strokeWidth={2.5} />
-        <span>إتمام الطلب عبر واتساب</span>
-        <span className="font-black text-[#FFC107]">{finalTotal.toLocaleString()} دج</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="white" className="flex-shrink-0">
+          <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-2.007 9.455c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.87.766z"/>
+        </svg>
+        <span>إتمام الطلب عبر تيليغرام</span>
+        <span className="font-black text-yellow-300">{finalTotal.toLocaleString()} دج</span>
       </motion.button>
 
       <p className="text-center text-[11px] text-gray-400 font-bold mt-3">
-        سيتم التواصل معك عبر واتساب لتأكيد طلبك
+        سيتم التواصل معك عبر تيليغرام لتأكيد طلبك
       </p>
     </div>
   );

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Menu, Search, Bell, ShoppingCart, X } from "lucide-react";
+import { Menu, Search, ShoppingCart, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/context/CartContext";
 import { MENU_ITEMS } from "@/data/menu";
@@ -14,58 +14,49 @@ export default function Navbar() {
     ? MENU_ITEMS.filter((m) => m.name.includes(query) || (m.description ?? "").includes(query))
     : [];
 
+  const closeSearch = () => { setSearchOpen(false); setQuery(""); };
+
   return (
     <>
       <header
         className="sticky top-0 z-40 max-w-[480px] w-full mx-auto"
         data-testid="navbar"
-        style={{
-          background: "linear-gradient(135deg, #FFC107 0%, #FFD54F 100%)",
-          boxShadow: "0 2px 16px rgba(255,193,7,0.35)",
-        }}
+        style={{ background: "linear-gradient(135deg, #FFC107 0%, #FFD54F 100%)", boxShadow: "0 2px 16px rgba(255,193,7,0.35)" }}
       >
-        <div className="flex items-center justify-between px-4 h-14">
-          {/* Left: Hamburger */}
-          <motion.button
-            data-testid="nav-hamburger"
-            whileTap={{ scale: 0.9 }}
-            className="w-10 h-10 rounded-xl bg-black/10 flex items-center justify-center"
-          >
-            <Menu className="w-5 h-5 text-black" strokeWidth={2.5} />
-          </motion.button>
+        <div className="flex items-center justify-between px-3 h-14 gap-2">
+          {/* Left side */}
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <motion.button
+              data-testid="nav-hamburger"
+              whileTap={{ scale: 0.9 }}
+              className="w-9 h-9 rounded-xl bg-black/10 flex items-center justify-center"
+            >
+              <Menu className="w-5 h-5 text-black" strokeWidth={2.5} />
+            </motion.button>
 
-          {/* Center: Logo */}
-          <div className="flex items-center gap-1 absolute left-1/2 -translate-x-1/2">
-            <span className="text-[22px] font-black text-black tracking-tighter leading-none">MISO</span>
-            <img src={mascotImg} alt="Miso" className="w-9 h-9 object-contain drop-shadow-md" />
-            <span className="text-[22px] font-black text-[#DC2626] tracking-tighter leading-none">FOOD</span>
-          </div>
-
-          {/* Right: Actions */}
-          <div className="flex items-center gap-2">
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={() => setSearchOpen(true)}
               className="w-9 h-9 rounded-xl bg-black/10 flex items-center justify-center"
             >
-              <Search className="w-4.5 h-4.5 text-black" strokeWidth={2.5} />
+              <Search className="w-4 h-4 text-black" strokeWidth={2.5} />
             </motion.button>
+          </div>
 
-            <motion.button
-              whileTap={{ scale: 0.9 }}
-              className="relative w-9 h-9 rounded-xl bg-black/10 flex items-center justify-center"
-            >
-              <Bell className="w-4.5 h-4.5 text-black" strokeWidth={2.5} />
-              <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#DC2626] border-2 border-[#FFC107] rounded-full text-white flex items-center justify-center text-[8px] font-black">
-                3
-              </span>
-            </motion.button>
+          {/* Center: Logo */}
+          <div className="flex items-center gap-1 flex-1 justify-center">
+            <span className="text-[20px] font-black text-black tracking-tighter leading-none">MISO</span>
+            <img src={mascotImg} alt="Miso" className="w-8 h-8 object-contain drop-shadow-md" />
+            <span className="text-[20px] font-black text-[#DC2626] tracking-tighter leading-none">FOOD</span>
+          </div>
 
+          {/* Right: Cart pill */}
+          <div className="flex-shrink-0">
             <motion.button
               whileTap={{ scale: 0.95 }}
-              className="flex items-center gap-1.5 bg-white/90 backdrop-blur-sm rounded-2xl pl-2.5 pr-1.5 py-1 shadow-sm border border-white/50"
+              className="flex items-center gap-1.5 bg-white/90 backdrop-blur-sm rounded-2xl px-2.5 py-1.5 shadow-sm border border-white/50"
             >
-              <div className="flex flex-col items-end leading-none">
+              <div className="flex flex-col items-end leading-none gap-0.5">
                 <span className="text-[9px] text-gray-500 font-bold">{totalItems} عناصر</span>
                 <span className="text-[11px] font-black text-[#DC2626]">{total.toLocaleString()} دج</span>
               </div>
@@ -78,7 +69,7 @@ export default function Navbar() {
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       exit={{ scale: 0 }}
-                      className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-[#DC2626] text-white text-[8px] font-black rounded-full flex items-center justify-center border border-white shadow-sm"
+                      className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-[#DC2626] text-white text-[8px] font-black rounded-full flex items-center justify-center border border-white"
                     >
                       {totalItems}
                     </motion.span>
@@ -98,8 +89,8 @@ export default function Navbar() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm flex flex-col max-w-[480px] mx-auto"
-            onClick={(e) => { if (e.target === e.currentTarget) { setSearchOpen(false); setQuery(""); } }}
+            className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm flex flex-col max-w-[480px] mx-auto left-0 right-0"
+            onClick={(e) => { if (e.target === e.currentTarget) closeSearch(); }}
           >
             <motion.div
               initial={{ y: -20, opacity: 0 }}
@@ -117,13 +108,12 @@ export default function Navbar() {
                   placeholder="ابحث في القائمة..."
                   className="flex-1 bg-transparent text-black font-bold text-sm placeholder-gray-400 outline-none text-right"
                 />
-                <motion.button whileTap={{ scale: 0.9 }} onClick={() => { setSearchOpen(false); setQuery(""); }}>
+                <motion.button whileTap={{ scale: 0.9 }} onClick={closeSearch}>
                   <X size={18} className="text-gray-400" />
                 </motion.button>
               </div>
             </motion.div>
 
-            {/* Results */}
             {results.length > 0 && (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
@@ -136,7 +126,7 @@ export default function Navbar() {
                     initial={{ opacity: 0, x: 10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.05 }}
-                    onClick={() => { addItem(item); setSearchOpen(false); setQuery(""); }}
+                    onClick={() => { addItem(item); closeSearch(); }}
                     className="w-full flex items-center gap-3 px-4 py-3 border-b border-gray-50 last:border-0 active:bg-gray-50 transition-colors text-right"
                   >
                     <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 bg-[#FFF9E6]">

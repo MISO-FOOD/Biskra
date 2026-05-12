@@ -1,4 +1,4 @@
-import { Bike, ShieldCheck, Headphones } from "lucide-react";
+import { Bike, Banknote, Headphones } from "lucide-react";
 import { motion } from "framer-motion";
 
 const features = [
@@ -11,12 +11,12 @@ const features = [
     link: "تتبع الطلب",
   },
   {
-    icon: ShieldCheck,
+    icon: Banknote,
     iconBg: "bg-green-50",
     iconColor: "text-green-600",
-    title: "دفع آمن",
-    desc: "خيارات متعددة",
-    link: "عرض الطرق",
+    title: "الدفع عند الاستلام",
+    desc: "ادفع لما يوصل",
+    link: "آمن ومضمون",
   },
   {
     icon: Headphones,
@@ -45,7 +45,7 @@ export default function FeaturesBar() {
               <div className={`w-9 h-9 rounded-xl ${f.iconBg} flex items-center justify-center mb-2`}>
                 <Icon size={18} className={f.iconColor} strokeWidth={2.5} />
               </div>
-              <h4 className="text-[11px] font-black text-black mb-0.5">{f.title}</h4>
+              <h4 className="text-[10px] font-black text-black mb-0.5 leading-tight">{f.title}</h4>
               <p className="text-[9px] text-gray-400 font-bold mb-1.5">{f.desc}</p>
               <span className="text-[9px] font-black text-[#DC2626]">{f.link} ←</span>
             </motion.div>
