@@ -14,7 +14,7 @@ const features = [
     link: "آمن ومضمون",
   },
   {
-    img: "/feat_support.jpg",
+    img: "/feat_support.png",
     title: "دعم 24/7",
     desc: "دائماً لخدمتك",
     link: "تواصل معنا",
