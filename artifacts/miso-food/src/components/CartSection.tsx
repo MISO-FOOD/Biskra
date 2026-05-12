@@ -245,18 +245,13 @@ export default function CartSection() {
       <div className="bg-white rounded-3xl p-5 shadow-lg border border-gray-50 mb-4 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-28 h-28 bg-[#FFC107]/10 rounded-full blur-2xl translate-x-10 -translate-y-10" />
         <div className="relative z-10 space-y-2.5">
-          <div className="flex justify-between">
-            <span className="text-gray-500 font-black text-sm">المجموع الفرعي</span>
-            <span className="font-black text-sm">{subtotal.toLocaleString()} دج</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-gray-500 font-black text-sm">التوصيل</span>
-            <span className="font-black text-sm text-[#FFC107]">يحدد بعد تأكيد الطلب</span>
-          </div>
           <div className="border-t-2 border-dashed border-gray-100 pt-3">
             <div className="flex justify-between items-center">
               <span className="font-black text-base text-black">المجموع</span>
-              <span className="font-black text-xl text-[#DC2626]">{subtotal.toLocaleString()} دج</span>
+              <div className="flex items-center gap-1.5">
+                <span className="font-black text-xl text-[#DC2626]">{subtotal.toLocaleString()} دج</span>
+                <span className="text-sm font-black text-[#FFC107]">+ التوصيل</span>
+              </div>
             </div>
           </div>
         </div>
