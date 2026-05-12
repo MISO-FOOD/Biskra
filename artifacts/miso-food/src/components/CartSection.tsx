@@ -296,7 +296,7 @@ export default function CartSection() {
         )}
       </motion.button>
       <p className="text-center text-[11px] text-gray-400 font-bold mt-3">
-        سيتم التواصل معك لتأكيد الطلب وتحديد سعر التوصيل
+        سيتم الاتصال بك من قبل فريق تأكيد الطلبات الآن
       </p>
     </div>
   );
